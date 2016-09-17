@@ -78,13 +78,7 @@ class Visualizer(stream: js.Dynamic) {
     windowResize()
     val body = jQuery("body")
     body.append(renderer.domElement)
-    val statsElm = jQuery(stats.dom)
-    statsElm.attr("id", "stats")
-    body.append(statsElm)
-    body.remove("#stats")
-
-
-
+    body.append(stats.dom)
 
     jQuery(window).resize((event: JQueryEventObject) => {
       windowResize()

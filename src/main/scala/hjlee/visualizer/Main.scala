@@ -18,14 +18,29 @@ import org.scalajs.dom.window
 object Main extends  JSApp
 {
   def main(): Unit = {
-//    success(g)
-    val um = g.navigator.mediaDevices.getUserMedia(
-      js.Dynamic.literal(audio = true)).`then`((stream: js.Dynamic) => {
+    g.navigator.getUserMedia = (g.navigator.getUserMedia ||
+      g.navigator.webkitGetUserMedia ||
+      g.navigator.mozGetUserMedia ||
+      g.navigator.msGetUserMedia)
+
+    g.navigator.getUserMedia(
+      js.Dynamic.literal(audio = true),
+      (stream: js.Dynamic) => {
         val app = new Visualizer(stream)
         app.start()
-      }).`catch`((error: js.Dynamic) => {
+      }, (error: js.Dynamic) => {
         println("Can't getUserMedia: " + error)
       }
     )
+
+    // not many browser support this
+//    val um = g.navigator.mediaDevices.getUserMedia(
+//      js.Dynamic.literal(audio = true)).`then`((stream: js.Dynamic) => {
+//        val app = new Visualizer(stream)
+//        app.start()
+//      }).`catch`((error: js.Dynamic) => {
+//        println("Can't getUserMedia: " + error)
+//      }
+//    )
   }
 }
