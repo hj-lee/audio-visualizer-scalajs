@@ -9,6 +9,9 @@ import org.denigma.threejs.{Camera, Vector3}
   * Created by hjlee on 9/14/16.
   */
 abstract class SceneMaker(val app: Visualizer) {
+
+  def render()
+
   def setSize(): Unit = {
     val camera = app.camera
     val width = app.width
@@ -30,6 +33,8 @@ abstract class SceneMaker(val app: Visualizer) {
     camera.rotation.y = angleY
 
   }
-  def render()
 
+  def frequencyToIndex(frequency: Double): Double = {
+    frequency / app.sampleRate * app.analyser.fftSize
+  }
 }

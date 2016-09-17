@@ -23,16 +23,19 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
   val kissFft = js.Dynamic.newInstance(g.KissFFT)(app.currentFftSize)
 
 
-  val maxDrawFreq = Math.min(app.maxShoingFrequency / app.sampleRate * app.analyser.fftSize,
+  val maxDrawFreq = Math.min(frequencyToIndex(app.maxShowingFrequency),
     app.analyser.frequencyBinCount-1)
 
-  println("mdf: " + maxDrawFreq)
+  val minDrawFreq = Math.min(frequencyToIndex(app.minShowingFrequency), app.analyser.frequencyBinCount-2)
+
+  println("man draw freq: " + maxDrawFreq)
+  println("min draw freq: " + minDrawFreq)
 
   setSize()
 
   var frameCnt = 0
 
-  var unitWidth = app.width / maxDrawFreq
+//  var unitWidth = app.width / maxDrawFreq
   var lxFactor = app.width / Math.log(app.width)
 
   var prevRender = window.performance.now()
@@ -48,19 +51,32 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
     val out = kissFft.forward(timeData).asInstanceOf[Float32Array]
 
     val geometry = new Geometry
-    var preX: Double = -1000
-    for (i <- 0 to maxDrawFreq.asInstanceOf[Int]) {
-      val x = unitWidth * i
+    var preLx: Double = -1000
+
+    val minIdx: Int = minDrawFreq.asInstanceOf[Int]
+    val maxIdx: Int = maxDrawFreq.asInstanceOf[Int]
+
+    def idxToX(i: Int): Double = Math.log1p(i)
+
+    val minX = idxToX(minIdx)
+    val maxX = idxToX(maxIdx)
+    val xWidth = maxX - minX
+    for (i <- minIdx to maxIdx) {
+      val x = idxToX(i)
       val y = out(i*2)
       val z = out(i*2+1)
 
+      val abs = Math.sqrt(y*y + z*z)
+//      val ly = Math.log1p(abs)*lxFactor/5.0
+      val ly = Math.log1p(abs*0.1)*lxFactor/3.0
+//      val ly = abs * 0.2
+//      val ly = Math.sqrt(abs) * 7.0
 
-      val lx = Math.log1p(x) * lxFactor - app.width/2
-      val ly = Math.log1p(Math.sqrt(y*y + z*z))*lxFactor/5.0
+      val lx = ((x - minX) - xWidth/2) * width / xWidth
+      if (lx - preLx > 0.9 || i == maxIdx) {
 
-      if (x - preX > 0.9) {
         geometry.vertices.push(new Vector3(lx, ly, 0))
-        preX = x
+        preLx = lx
       }
     }
     geometry.vertices.push(new Vector3(width/2,0,0))
@@ -79,7 +95,6 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
 
   override def setSize(): Unit = {
     super.setSize()
-    unitWidth = app.width / maxDrawFreq
     lxFactor = app.width / Math.log(app.width)
   }
 }

@@ -29,7 +29,8 @@ class Visualizer(stream: js.Dynamic) {
   val audioCtx = new AudioContext()
   val analyser = audioCtx.createAnalyser()
 
-  val maxShoingFrequency = 20000.0
+  val minShowingFrequency = 80.0
+  val maxShowingFrequency = 12000.0
 
   val sampleRate = audioCtx.sampleRate
   println(sampleRate)
@@ -46,6 +47,7 @@ class Visualizer(stream: js.Dynamic) {
     Math.min(32768, fftSize)
   }
   var currentFftSize = defaultFftSize
+//  currentFftSize = 8192
   println("fftsize " + currentFftSize)
 
   var width: Double = window.innerWidth

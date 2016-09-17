@@ -26,8 +26,8 @@ object Main extends  JSApp
     g.navigator.getUserMedia(
       js.Dynamic.literal(audio = true),
       (stream: js.Dynamic) => {
-        val app = new Visualizer(stream)
-        app.start()
+        val visualizer = new Visualizer(stream)
+        visualizer.start()
       }, (error: js.Dynamic) => {
         println("Can't getUserMedia: " + error)
       }
