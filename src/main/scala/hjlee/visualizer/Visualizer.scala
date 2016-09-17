@@ -10,6 +10,7 @@ import js.Dynamic.{global => g}
 import scala.scalajs.js.typedarray.{Float32Array, Uint8Array}
 import org.scalajs.jquery.{JQueryEventObject, jQuery}
 import org.denigma.threejs._
+import org.scalajs.dom
 
 import scala.scalajs.js.Function1
 import scala.scalajs.js.annotation.JSExport
@@ -53,83 +54,62 @@ class Visualizer(stream: js.Dynamic) {
   val scene = new Scene()
   val renderer = new WebGLRenderer()
 
-  // MARK width and height can change
-  var camera = new PerspectiveCamera(15, width/height, 1, width * 15)
+  def newCamera() = {
+    new PerspectiveCamera(15, width/height, 0.1, 20000)
+  }
+  var camera: Camera = newCamera()
 
   def windowResize(): Unit = {
     width = window.innerWidth
     // window.innerHeight-4 : to prevent scrollbars
     height = window.innerHeight-4
     renderer.setSize(width, height)
-    camera = new PerspectiveCamera(15, width/height, 1, width * 15)
+    camera = newCamera()
     sceneMaker.setSize()
   }
 
   analyser.fftSize = currentFftSize
+  analyser.smoothingTimeConstant = 0
+
+  val stats = js.Dynamic.newInstance(g.Stats)()
 
   var sceneMaker : SceneMaker = new KissSceneMaker(this)
   def start(): Unit = {
     windowResize()
-    jQuery("body").append(renderer.domElement)
+    val body = jQuery("body")
+    body.append(renderer.domElement)
+    val statsElm = jQuery(stats.dom)
+    statsElm.attr("id", "stats")
+    body.append(statsElm)
+    body.remove("#stats")
+
+
+
+
     jQuery(window).resize((event: JQueryEventObject) => {
       windowResize()
     })
-    Visualizer.start(render)
+    val audioFrameLength = currentFftSize.asInstanceOf[Double] / sampleRate
+    Visualizer.start(render, 0 * audioFrameLength * 1000 / 2)
   }
 
   def render() = {
-//    println("render")
     sceneMaker.render()
-  }
-
-  //
-  // ignore
-  def xx(): Unit = {
-    analyser.fftSize = currentFftSize
-    val arr = new Uint8Array(analyser.fftSize)
-//    val arr = new Uint8Array(analyzer.frequencyBinCount)
-
-    val fa = new Float32Array(arr.length)
-    val a = new Array[Float](arr.length)
-
-
-    (1 to 100).foreach((n)=> {
-      analyser.getByteTimeDomainData(arr)
-//      analyzer.getByteFrequencyData(arr)
-      a.indices.foreach(i => {
-        fa(i) = arr(i) - 127.5f
-        if (Math.abs(fa(i)) < 0.6) fa(i) = 0f
-        else fa(i) /= 256.0f
-      })
-
-//      analyzer.getFloatTimeDomainData(fa)
-
-      a.indices.foreach(i => {
-        a(i) = fa(i)
-      })
-      println(a.max)
-      println(a.min)
-      //    println(arr)
-    })
   }
 }
 
-//object Visualizer {
-//  @JSExport
-//  def loop(): Unit =  {
-//    window.requestAnimationFrame(loop.asInstanceOf[js.Function1[Any,Any]])
-//
-//  }
-//}
-
 object Visualizer {
-
-  def loop(render: () => Unit): () => Unit = () => {
-    g.window.requestAnimationFrame(loop(render))
+  var id : Int = 0
+  def animationLoop(render: () => Unit): () => Unit = () => {
     render()
+    id = g.window.requestAnimationFrame(animationLoop(render)).asInstanceOf[Int]
   }
 
-  def start(render: () => Unit) = {
-    loop(render)()
+  def start(render: () => Unit, interval: Double = 0) = {
+    if (interval == 0) animationLoop(render)()
+    else {
+      id = window.setInterval(render, interval)
+    }
   }
+
 }

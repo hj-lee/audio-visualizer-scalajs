@@ -3,8 +3,9 @@ package hjlee.visualizer
 import org.denigma.threejs
 import threejs.{Camera, Color, Geometry, Line, LineBasicMaterial, Vector3}
 
-import scala.scalajs.js.typedarray.Float32Array
+import scala.scalajs.js.typedarray.{Float32Array, Uint8Array}
 import scala.scalajs.js
+import org.scalajs.dom.window
 import js.Dynamic.{global => g}
 
 /**
@@ -17,6 +18,7 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
   val mat = new LineBasicMaterial()
   mat.color = new Color(0xffffff)
 
+  // MARK
   val timeData = new Float32Array(app.currentFftSize)
   val kissFft = js.Dynamic.newInstance(g.KissFFT)(app.currentFftSize)
 
@@ -24,7 +26,6 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
   val maxDrawFreq = Math.min(app.maxShoingFrequency / app.sampleRate * app.analyser.fftSize,
     app.analyser.frequencyBinCount-1)
 
-//  val maxDrawFreq = app.analyser.frequencyBinCount-1
   println("mdf: " + maxDrawFreq)
 
   setSize()
@@ -34,7 +35,9 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
   var unitWidth = app.width / maxDrawFreq
   var lxFactor = app.width / Math.log(app.width)
 
+  var prevRender = window.performance.now()
   override def render(): Unit = {
+    app.stats.begin()
     preLine.foreach(app.scene.remove(_))
     preGeo.foreach(_.dispose)
 
@@ -51,8 +54,10 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
       val y = out(i*2)
       val z = out(i*2+1)
 
+
       val lx = Math.log1p(x) * lxFactor - app.width/2
       val ly = Math.log1p(Math.sqrt(y*y + z*z))*lxFactor/5.0
+
       if (x - preX > 0.9) {
         geometry.vertices.push(new Vector3(lx, ly, 0))
         preX = x
@@ -69,6 +74,7 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
     preGeo = Some(geometry)
     preLine = Some(line)
     frameCnt += 1
+    app.stats.end()
   }
 
   override def setSize(): Unit = {

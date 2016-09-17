@@ -15,7 +15,8 @@ import org.scalajs.dom.window
 /**
   * Created by hjlee on 9/14/16.
   */
-object Main extends JSApp {
+object Main extends  JSApp
+{
   def main(): Unit = {
 //    success(g)
     val um = g.navigator.mediaDevices.getUserMedia(

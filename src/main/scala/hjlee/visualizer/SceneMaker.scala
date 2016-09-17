@@ -1,5 +1,8 @@
 package hjlee.visualizer
 
+import scala.scalajs.js
+import js.Dynamic.{global => g}
+
 import org.denigma.threejs.{Camera, Vector3}
 
 /**
@@ -25,6 +28,7 @@ abstract class SceneMaker(val app: Visualizer) {
 
     camera.rotation.x = -angleX
     camera.rotation.y = angleY
+
   }
   def render()
 
