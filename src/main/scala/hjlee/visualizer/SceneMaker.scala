@@ -33,8 +33,4 @@ abstract class SceneMaker(val app: Visualizer) {
     camera.rotation.y = angleY
 
   }
-
-  def frequencyToIndex(frequency: Double): Double = {
-    frequency / app.sampleRate * app.analyser.fftSize
-  }
 }

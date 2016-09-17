@@ -11,44 +11,19 @@ import scala.scalajs.js.typedarray.{Float32Array, Uint8Array}
 import org.scalajs.jquery.{JQueryEventObject, jQuery}
 import org.denigma.threejs._
 import org.scalajs.dom
+import org.scalajs.dom.raw.AnalyserNode
 
 import scala.scalajs.js.Function1
 import scala.scalajs.js.annotation.JSExport
 import scala.util.Random
 
-/**
-  * Created by hjlee on 9/14/16.
-  */
 
-//@js.native
-//object AudioContext extends js.Object
+
 
 class Visualizer(stream: js.Dynamic) {
-  /////////
-  // analyzer
-  val audioCtx = new AudioContext()
-  val analyser = audioCtx.createAnalyser()
 
-  val minShowingFrequency = 80.0
-  val maxShowingFrequency = 12000.0
+  val analyser = new Analyser(stream)
 
-  val sampleRate = audioCtx.sampleRate
-  println(sampleRate)
-
-  val source = audioCtx.createMediaStreamSource(stream.asInstanceOf[MediaStream])
-  source.connect(analyser)
-
-
-  val defaultFftSize: Int = {
-    val expFrameRate = sampleRate / 15
-    val log2FrameRate = Math.ceil(Math.log(expFrameRate)/Math.log(2))
-    println("log2fr " + log2FrameRate)
-    val fftSize = Math.pow(2, log2FrameRate).asInstanceOf[Int]
-    Math.min(32768, fftSize)
-  }
-  var currentFftSize = defaultFftSize
-//  currentFftSize = 8192
-  println("fftsize " + currentFftSize)
 
   var width: Double = window.innerWidth
   var height: Double = window.innerHeight-4
@@ -70,8 +45,7 @@ class Visualizer(stream: js.Dynamic) {
     sceneMaker.setSize()
   }
 
-  analyser.fftSize = currentFftSize
-  analyser.smoothingTimeConstant = 0
+
 
   val stats = js.Dynamic.newInstance(g.Stats)()
 
@@ -85,8 +59,8 @@ class Visualizer(stream: js.Dynamic) {
     jQuery(window).resize((event: JQueryEventObject) => {
       windowResize()
     })
-    val audioFrameLength = currentFftSize.asInstanceOf[Double] / sampleRate
-    Visualizer.start(render, 0 * audioFrameLength * 1000 / 2)
+
+    Visualizer.start(render, analyser.audioFrameLength * 1000 / 2)
   }
 
   def render() = {

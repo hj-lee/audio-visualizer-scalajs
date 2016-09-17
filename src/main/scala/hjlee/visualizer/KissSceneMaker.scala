@@ -19,17 +19,11 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
   mat.color = new Color(0xffffff)
 
   // MARK
-  val timeData = new Float32Array(app.currentFftSize)
-  val kissFft = js.Dynamic.newInstance(g.KissFFT)(app.currentFftSize)
+  val timeData = new Float32Array(app.analyser.fftSize)
+  val kissFft = js.Dynamic.newInstance(g.KissFFT)(app.analyser.fftSize)
 
 
-  val maxDrawFreq = Math.min(frequencyToIndex(app.maxShowingFrequency),
-    app.analyser.frequencyBinCount-1)
 
-  val minDrawFreq = Math.min(frequencyToIndex(app.minShowingFrequency), app.analyser.frequencyBinCount-2)
-
-  println("man draw freq: " + maxDrawFreq)
-  println("min draw freq: " + minDrawFreq)
 
   setSize()
 
@@ -46,15 +40,15 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
 
     val width = app.width
 
-    app.analyser.fftSize = app.currentFftSize
+//    app.analyser._fftSize = app.analyser.fftSize
     app.analyser.getFloatTimeDomainData(timeData)
     val out = kissFft.forward(timeData).asInstanceOf[Float32Array]
 
     val geometry = new Geometry
-    var preLx: Double = -1000
+    var preLx: Double = -100000
 
-    val minIdx: Int = minDrawFreq.asInstanceOf[Int]
-    val maxIdx: Int = maxDrawFreq.asInstanceOf[Int]
+    val minIdx: Int = app.analyser.minDrawIndex
+    val maxIdx: Int = app.analyser.maxDrawIndex
 
     def idxToX(i: Int): Double = Math.log1p(i)
 
