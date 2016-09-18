@@ -18,18 +18,10 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
   val mat = new LineBasicMaterial()
   mat.color = new Color(0xffffff)
 
-  // MARK
-  val timeData = new Float32Array(app.analyser.fftSize)
-  val kissFft = js.Dynamic.newInstance(g.KissFFT)(app.analyser.fftSize)
-
-
-
-
   setSize()
 
   var frameCnt = 0
 
-//  var unitWidth = app.width / maxDrawFreq
   var lxFactor = app.width / Math.log(app.width)
 
   var prevRender = window.performance.now()
@@ -40,9 +32,7 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
 
     val width = app.width
 
-//    app.analyser._fftSize = app.analyser.fftSize
-    app.analyser.getFloatTimeDomainData(timeData)
-    val out = kissFft.forward(timeData).asInstanceOf[Float32Array]
+    val out = app.analyser.getFrequencyData()
 
     val geometry = new Geometry
     var preLx: Double = -100000
