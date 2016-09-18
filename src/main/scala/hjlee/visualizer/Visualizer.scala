@@ -63,22 +63,25 @@ class Visualizer(stream: js.Dynamic) {
     Visualizer.start(render, analyser.audioFrameLength * 1000 / 2)
   }
 
-  def render() = {
+  def render(t: Double) = {
     sceneMaker.render()
   }
 }
 
 object Visualizer {
   var id : Int = 0
-  def animationLoop(render: () => Unit): () => Unit = () => {
-    render()
-    id = g.window.requestAnimationFrame(animationLoop(render)).asInstanceOf[Int]
+  def animationLoop(render: Double => Unit): Double => Unit = (t: Double) => {
+    render(t)
+    id = window.requestAnimationFrame(animationLoop(render))
   }
 
-  def start(render: () => Unit, interval: Double = 0) = {
-    if (interval == 0) animationLoop(render)()
+  def start(render: Double => Unit, interval: Double = 0) = {
+    if (interval == 0) {
+      val fun = animationLoop(render)
+      id = window.requestAnimationFrame(fun)
+    }
     else {
-      id = window.setInterval(render, interval)
+      id = window.setInterval(() => render(window.performance.now()), interval)
     }
   }
 
