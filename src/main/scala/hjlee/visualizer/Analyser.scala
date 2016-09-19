@@ -1,5 +1,6 @@
 package hjlee.visualizer
 
+import hjlee.visualizer.jsFacade.KissFFT
 import org.scalajs.dom.experimental.mediastream.MediaStream
 import org.scalajs.dom.raw.AudioContext
 
@@ -102,9 +103,10 @@ object Analyser {
   val MIN_FFT_SIZE = 256
   val MAX_FFT_SIZE = 32768
 
-  private var kissMap = scala.collection.mutable.Map[Int, js.Dynamic]()
+  private var kissMap = scala.collection.mutable.Map[Int, KissFFT]()
 
   private def getKiss(fftSize: Int) = {
-    kissMap.getOrElseUpdate(fftSize, js.Dynamic.newInstance(g.KissFFT)(fftSize))
+//    kissMap.getOrElseUpdate(fftSize, js.Dynamic.newInstance(g.KissFFT)(fftSize))
+    kissMap.getOrElseUpdate(fftSize, new KissFFT(fftSize))
   }
 }

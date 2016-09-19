@@ -1,21 +1,15 @@
 package hjlee.visualizer
 
-import org.scalajs.dom.AudioContext
-import org.scalajs.dom.experimental.mediastream.MediaStream
-import org.scalajs.dom.document
-import org.scalajs.dom.window
+import org.denigma.threejs._
+import org.scalajs.dom.raw.HTMLCanvasElement
+import org.scalajs.dom
+import dom.{Element, document, html, window}
+import hjlee.visualizer.jsFacade.Stats
+import org.scalajs.jquery.{JQueryEventObject, jQuery}
 
 import scala.scalajs.js
-import js.Dynamic.{global => g}
-import scala.scalajs.js.typedarray.{Float32Array, Uint8Array}
-import org.scalajs.jquery.{JQueryEventObject, jQuery}
-import org.denigma.threejs._
-import org.scalajs.dom
-import org.scalajs.dom.raw.AnalyserNode
-
-import scala.scalajs.js.Function1
-import scala.scalajs.js.annotation.JSExport
-import scala.util.Random
+//import scala.scalajs.js.Dynamic.{global => g}
+import scalatags.JsDom.all._
 
 
 
@@ -46,21 +40,77 @@ class Visualizer(stream: js.Dynamic) {
   }
 
 
-
-  val stats = js.Dynamic.newInstance(g.Stats)()
+  // SceneMakers need 'stats'
+//  val stats = js.Dynamic.newInstance(g.Stats)()
+  val stats = new Stats();
 
   var sceneMaker : SceneMaker = new KissSceneMaker(this)
+
+
+
+
   def start(): Unit = {
     windowResize()
-    val body = jQuery("body")
-    body.append(renderer.domElement)
-    body.append(stats.dom)
 
+    val content = document.getElementById("content")
+    val renderCanvas :HTMLCanvasElement = renderer.domElement
+    content.appendChild(renderCanvas)
+    stats.dom.setAttribute("id", "stats")
+
+    content.appendChild(stats.dom.asInstanceOf[Element])
     jQuery(window).resize((event: JQueryEventObject) => {
       windowResize()
     })
 
+    renderControls(content, renderCanvas)
+
     Visualizer.start(render, analyser.audioFrameLength * 1000 / 2)
+  }
+
+  def renderControls(content: Element, canvas: HTMLCanvasElement) = {
+    val controlDiv =
+      div(
+        id := "control",
+        position := "absolute",
+        top := "0px",
+        right := "0px",
+        //        zIndex := 9000,
+        //        display := "-webkit-box",
+        //        display := "-moz-box",
+        //        display := "-ms-flexbox",
+        //        display := "-webkit-flex",
+        //        display := "flex",
+        color := "green"
+      )(
+        div("control")
+      ).render
+    content.appendChild(controlDiv)
+
+    val buttonA = button("A").render
+    buttonA.onclick =
+      (e: dom.Event) => { buttonA.innerHTML = "A" + buttonA.innerHTML }
+
+    controlDiv.appendChild(buttonA)
+    val diffDiv = div().render
+    controlDiv.appendChild(diffDiv)
+
+    var startPos: (Double, Double) = (0, 0)
+    var down = false
+    canvas.onmousedown = (e: dom.MouseEvent) => {
+      down = true
+      startPos = (e.clientX, e.clientY)
+    }
+    canvas.onmouseup = (e: dom.MouseEvent) => {
+      down = false
+      diffDiv.innerHTML = ""
+    }
+    canvas.onmousemove = (e: dom.MouseEvent) => {
+      if (down) {
+        val xDiff = e.clientX - startPos._1
+        val yDiff = e.clientY - startPos._2
+        diffDiv.innerHTML = "(" + xDiff + ", " + yDiff + ")"
+      }
+    }
   }
 
   def render(t: Double) = {
