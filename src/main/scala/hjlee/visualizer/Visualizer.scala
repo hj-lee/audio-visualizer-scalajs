@@ -3,9 +3,9 @@ package hjlee.visualizer
 import org.denigma.threejs._
 import org.scalajs.dom.raw.HTMLCanvasElement
 import org.scalajs.dom
-import dom.{Element, document, html, window}
+import dom._
 import hjlee.visualizer.jsFacade.Stats
-import org.scalajs.jquery.{JQueryEventObject, jQuery}
+//import org.scalajs.jquery.{JQueryEventObject, jQuery}
 
 import scala.scalajs.js
 //import scala.scalajs.js.Dynamic.{global => g}
@@ -58,9 +58,13 @@ class Visualizer(stream: js.Dynamic) {
     stats.dom.setAttribute("id", "stats")
 
     content.appendChild(stats.dom.asInstanceOf[Element])
-    jQuery(window).resize((event: JQueryEventObject) => {
-      windowResize()
-    })
+    window.onresize =
+      (e: Event) => {
+        windowResize()
+      }
+//    jQuery(window).resize((event: JQueryEventObject) => {
+//      windowResize()
+//    })
 
     renderControls(content, renderCanvas)
 

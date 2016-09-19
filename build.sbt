@@ -13,21 +13,25 @@ resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases") //add resol
 
 libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "0.9.0"
 libraryDependencies += "com.lihaoyi" %%% "scalatags" % "0.6.0"
-libraryDependencies += "be.doeraene" %%% "scalajs-jquery" % "0.9.0"
 libraryDependencies += "org.denigma" %%% "threejs-facade" % "0.0.74-0.1.7"
+
+//libraryDependencies += "be.doeraene" %%% "scalajs-jquery" % "0.9.0"
 //libraryDependencies += "com.github.japgolly.scalajs-react" %%% "extra"   % "0.11.1"
 //libraryDependencies += "com.lihaoyi"                       %%% "upickle" % "0.4.1"
 
 
 skip in packageJSDependencies := false
 
-jsDependencies += "org.webjars" % "jquery" % "3.1.0" / "3.1.0/jquery.js" minified "3.1.0/jquery.min.js"
 jsDependencies += ProvidedJS / "scripts/stats.min.js"
 
 ////
 ////   kissfft does not work included in -jsdeps.js
 //jsDependencies += ProvidedJS / "scripts/kissfft/KissFFT.js"
 //jsDependencies += ProvidedJS / "scripts/kissfft/FFT.js"
+
+
+//jsDependencies += "org.webjars" % "jquery" % "3.1.0" / "3.1.0/jquery.js" minified "3.1.0/jquery.min.js"
+
 
 //jsDependencies ++= Seq(
 //  "org.webjars.bower" % "react" % "15.2.1"
