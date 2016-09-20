@@ -1,0 +1,9 @@
+/.ensime
+/.ensime_cache
+/generated/audio-visualizer-scalajs-test-fastopt.js
+/generated/audio-visualizer-scalajs-test-fastopt.js.map
+/generated/audio-visualizer-scalajs-test-jsdeps.js
+/.idea
+/project/project
+/project/target
+/target
