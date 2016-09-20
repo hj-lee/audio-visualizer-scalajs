@@ -94,39 +94,7 @@ class Visualizer(stream: js.Dynamic) {
     val diffDiv = div().render
     controlDiv.appendChild(diffDiv)
 
-    var startPos: (Double, Double) = (0, 0)
-    var down = false
-    canvas.onmousedown = (e: dom.MouseEvent) => {
-      down = true
-      startPos = (e.clientX, e.clientY)
-      cameraControl.onmousedown(e)
-    }
-    canvas.onmouseup = (e: dom.MouseEvent) => {
-      down = false
-      diffDiv.innerHTML = ""
-      cameraControl.onmouseup(e)
-    }
-    canvas.onmouseleave = canvas.onmouseup
-//    canvas.onmouseout = canvas.onmouseup
-
-    canvas.onmousemove = (e: dom.MouseEvent) => {
-      if (down) {
-        val xDiff = e.clientX - startPos._1
-        val yDiff = e.clientY - startPos._2
-        diffDiv.innerHTML = "(" + xDiff + ", " + yDiff + ")" + e.button + "|" + e.buttons
-        cameraControl.onmousemove(e)
-      }
-    }
-    canvas.onmousewheel = (e: WheelEvent) => {
-      // deltaY
-      diffDiv.innerHTML = "" + e.deltaX + "/" + e.deltaY + "/" + e.deltaZ
-      cameraControl.onmousewheel(e)
-    }
-//    canvas.onmousedown = (e: MouseEvent) => cameraControl.onmousedown(e)
-//    canvas.onmouseup = (e: MouseEvent) => cameraControl.onmouseup(e)
-//    canvas.onmouseleave = (e: MouseEvent) => cameraControl.onmouseup(e)
-//    canvas.onmousemove = (e: MouseEvent) => cameraControl.onmousemove(e)
-//    canvas.onmousewheel = (e: WheelEvent) => cameraControl.onmousewheel(e)
+    cameraControl.attachMouseControl(canvas)
   }
 
   def render(t: Double) = {

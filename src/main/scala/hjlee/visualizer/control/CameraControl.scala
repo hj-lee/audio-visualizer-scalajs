@@ -4,6 +4,8 @@ import hjlee.visualizer.Visualizer
 import org.denigma.threejs.{Camera, PerspectiveCamera, Vector3}
 import org.scalajs.dom
 import org.scalajs.dom.WheelEvent
+import org.scalajs.dom.html.Element
+import org.scalajs.dom.raw.HTMLElement
 
 /**
   * Created by hjlee on 9/19/16.
@@ -54,34 +56,40 @@ class CameraControl(var width: Double, var height: Double) {
 
 
   // mouse control
+  def attachMouseControl(canvas: Element){
+    var startPos: (Double, Double) = (0, 0)
+    var down = false
+    var baseAngleX = 0.0
+    var baseAngleY = 0.0
 
-  var startPos: (Double, Double) = (0, 0)
-  var down = false
-  var baseAngleX = 0.0
-  var baseAngleY = 0.0
-  def onmousedown(e: dom.MouseEvent) = {
-    down = true
-    startPos = (e.clientX, e.clientY)
-    baseAngleX = angleX
-    baseAngleY = angleY
-  }
-  def onmouseup(e: dom.MouseEvent) = {
-    down = false
-  }
+    val onmousedown = (e: dom.MouseEvent) => {
+      down = true
+      startPos = (e.clientX, e.clientY)
+      baseAngleX = angleX
+      baseAngleY = angleY
+    }
+    val onmouseup = (e: dom.MouseEvent) => {
+      down = false
+    }
 
-  def onmousemove(e: dom.MouseEvent) = {
-    if (down) {
-      val xDiff = e.clientX - startPos._1
-      val yDiff = e.clientY - startPos._2
-      angleX = baseAngleX + yDiff * Math.PI / 180
-      angleY = baseAngleY + xDiff * Math.PI / 180
+    val onmousemove = (e: dom.MouseEvent) => {
+      if (down) {
+        val xDiff = e.clientX - startPos._1
+        val yDiff = e.clientY - startPos._2
+        angleX = baseAngleX + yDiff * Math.PI / 180
+        angleY = baseAngleY + xDiff * Math.PI / 180
+        setCamera()
+      }
+    }
+    val onmousewheel = (e: WheelEvent) => {
+      translation.z += e.deltaY
       setCamera()
     }
-  }
-  def onmousewheel(e: WheelEvent) = {
-//    translation.x += e.deltaX
-    translation.z += e.deltaY
-//    translation.y += e.deltaZ
-    setCamera()
+
+    canvas.onmousedown = onmousedown
+    canvas.onmouseup = onmouseup
+    canvas.onmouseleave = onmouseup
+    canvas.onmousemove = onmousemove
+    canvas.onmousewheel = onmousewheel
   }
 }
