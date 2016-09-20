@@ -6,33 +6,40 @@ version := "1.0"
 scalaVersion := "2.11.8"
 scalacOptions   ++= Seq("-deprecation", "-encoding", "UTF-8", "-feature", "-unchecked", "-Xlint", "-Yno-adapted-args", "-Ywarn-dead-code", "-Ywarn-value-discard" )
 
-
 scalaJSUseRhino in Global := false
 
-resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases") //add resolver
-
+// scalajs-dom, scalatags
 libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "0.9.0"
 libraryDependencies += "com.lihaoyi" %%% "scalatags" % "0.6.0"
+
+// three.js
+// - include js file in index.html
+resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases") //add resolver
 libraryDependencies += "org.denigma" %%% "threejs-facade" % "0.0.74-0.1.7"
 
+
+// uTest
+libraryDependencies += "com.lihaoyi" %%% "utest" % "0.4.3" % "test"
+testFrameworks += new TestFramework("utest.runner.Framework")
+
+//// jquery
 //libraryDependencies += "be.doeraene" %%% "scalajs-jquery" % "0.9.0"
-//libraryDependencies += "com.github.japgolly.scalajs-react" %%% "extra"   % "0.11.1"
-//libraryDependencies += "com.lihaoyi"                       %%% "upickle" % "0.4.1"
+//jsDependencies += "org.webjars" % "jquery" % "3.1.0" / "3.1.0/jquery.js" minified "3.1.0/jquery.min.js"
+
 
 
 skip in packageJSDependencies := false
 
 jsDependencies += ProvidedJS / "scripts/stats.min.js"
 
-////
 ////   kissfft does not work included in -jsdeps.js
 //jsDependencies += ProvidedJS / "scripts/kissfft/KissFFT.js"
 //jsDependencies += ProvidedJS / "scripts/kissfft/FFT.js"
 
 
-//jsDependencies += "org.webjars" % "jquery" % "3.1.0" / "3.1.0/jquery.js" minified "3.1.0/jquery.min.js"
 
-
+//// react
+//libraryDependencies += "com.github.japgolly.scalajs-react" %%% "extra"   % "0.11.1"
 //jsDependencies ++= Seq(
 //  "org.webjars.bower" % "react" % "15.2.1"
 //    /        "react-with-addons.js"

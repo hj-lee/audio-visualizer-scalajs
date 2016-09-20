@@ -41,6 +41,10 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
     val maxIdx: Int = app.analyser.maxDrawIndex
 
     def idxToX(i: Int): Double = Math.log1p(i)
+//    def idxToX(i: Int): Double = app.analyser.sampleRate / app.analyser.fftSize * (i+1)
+//    def idxToX(i: Int): Double = Math.log(app.analyser.sampleRate / app.analyser.fftSize * (i+1))
+//    def idxToX(i: Int): Double = i
+
 
     val minX = idxToX(minIdx)
     val maxX = idxToX(maxIdx)
@@ -69,7 +73,7 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
     val line = new Line(geometry, mat)
     app.scene.add(line)
 
-    app.renderer.render(app.scene, app.camera)
+    app.renderer.render(app.scene, app.cameraControl.camera)
 
     preGeo = Some(geometry)
     preLine = Some(line)
@@ -77,8 +81,7 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
     app.stats.end()
   }
 
-  override def setSize(): Unit = {
-    super.setSize()
+  def setSize(): Unit = {
     lxFactor = app.width / Math.log(app.width)
   }
 }

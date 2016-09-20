@@ -4,38 +4,40 @@ import org.denigma.threejs._
 import org.scalajs.dom.raw.HTMLCanvasElement
 import org.scalajs.dom
 import dom._
+import hjlee.visualizer.control.CameraControl
 import hjlee.visualizer.jsFacade.Stats
+
+import scala.collection.mutable.ArrayBuffer
 //import org.scalajs.jquery.{JQueryEventObject, jQuery}
 
 import scala.scalajs.js
 //import scala.scalajs.js.Dynamic.{global => g}
 import scalatags.JsDom.all._
 
-
-
-
 class Visualizer(stream: js.Dynamic) {
 
   val analyser = new Analyser(stream)
 
-
   var width: Double = window.innerWidth
   var height: Double = window.innerHeight-4
+
+  val cameraControl = new CameraControl(width, height)
 
   val scene = new Scene()
   val renderer = new WebGLRenderer()
 
-  def newCamera() = {
-    new PerspectiveCamera(15, width/height, 0.1, 20000)
-  }
-  var camera: Camera = newCamera()
+
 
   def windowResize(): Unit = {
     width = window.innerWidth
     // window.innerHeight-4 : to prevent scrollbars
     height = window.innerHeight-4
     renderer.setSize(width, height)
-    camera = newCamera()
+    // camera with new aspect
+    cameraControl.setSize(width, height)
+    // not working
+//    camera.asInstanceOf[js.Dynamic].fov = 15
+//    camera.asInstanceOf[js.Dynamic].aspect = width/height
     sceneMaker.setSize()
   }
 
@@ -45,9 +47,6 @@ class Visualizer(stream: js.Dynamic) {
   val stats = new Stats();
 
   var sceneMaker : SceneMaker = new KissSceneMaker(this)
-
-
-
 
   def start(): Unit = {
     windowResize()
@@ -62,9 +61,6 @@ class Visualizer(stream: js.Dynamic) {
       (e: Event) => {
         windowResize()
       }
-//    jQuery(window).resize((event: JQueryEventObject) => {
-//      windowResize()
-//    })
 
     renderControls(content, renderCanvas)
 
@@ -103,10 +99,12 @@ class Visualizer(stream: js.Dynamic) {
     canvas.onmousedown = (e: dom.MouseEvent) => {
       down = true
       startPos = (e.clientX, e.clientY)
+      cameraControl.onmousedown(e)
     }
     canvas.onmouseup = (e: dom.MouseEvent) => {
       down = false
       diffDiv.innerHTML = ""
+      cameraControl.onmouseup(e)
     }
     canvas.onmouseleave = canvas.onmouseup
 //    canvas.onmouseout = canvas.onmouseup
@@ -116,24 +114,19 @@ class Visualizer(stream: js.Dynamic) {
         val xDiff = e.clientX - startPos._1
         val yDiff = e.clientY - startPos._2
         diffDiv.innerHTML = "(" + xDiff + ", " + yDiff + ")" + e.button + "|" + e.buttons
+        cameraControl.onmousemove(e)
       }
     }
     canvas.onmousewheel = (e: WheelEvent) => {
       // deltaY
       diffDiv.innerHTML = "" + e.deltaX + "/" + e.deltaY + "/" + e.deltaZ
+      cameraControl.onmousewheel(e)
     }
-    canvas.addEventListener("touchstart", (e: TouchEvent) => {
-      down = true
-      startPos = (e.touches(0).clientX, e.touches(0).clientY)
-    })
-    canvas.addEventListener("touchend", (e: TouchEvent) => {
-      down = false;
-    })
-    canvas.addEventListener("touchmove", (e: TouchEvent) => {
-      val xDiff = e.touches(0).clientX - startPos._1
-      val yDiff = e.touches(0).clientY - startPos._2
-      diffDiv.innerHTML = "(" + xDiff + ", " + yDiff + ")"
-    })
+//    canvas.onmousedown = (e: MouseEvent) => cameraControl.onmousedown(e)
+//    canvas.onmouseup = (e: MouseEvent) => cameraControl.onmouseup(e)
+//    canvas.onmouseleave = (e: MouseEvent) => cameraControl.onmouseup(e)
+//    canvas.onmousemove = (e: MouseEvent) => cameraControl.onmousemove(e)
+//    canvas.onmousewheel = (e: WheelEvent) => cameraControl.onmousewheel(e)
   }
 
   def render(t: Double) = {
