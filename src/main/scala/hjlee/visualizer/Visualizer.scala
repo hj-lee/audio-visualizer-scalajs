@@ -108,12 +108,19 @@ class Visualizer(stream: js.Dynamic) {
       down = false
       diffDiv.innerHTML = ""
     }
+    canvas.onmouseleave = canvas.onmouseup
+//    canvas.onmouseout = canvas.onmouseup
+
     canvas.onmousemove = (e: dom.MouseEvent) => {
       if (down) {
         val xDiff = e.clientX - startPos._1
         val yDiff = e.clientY - startPos._2
-        diffDiv.innerHTML = "(" + xDiff + ", " + yDiff + ")"
+        diffDiv.innerHTML = "(" + xDiff + ", " + yDiff + ")" + e.button + "|" + e.buttons
       }
+    }
+    canvas.onmousewheel = (e: WheelEvent) => {
+      // deltaY
+      diffDiv.innerHTML = "" + e.deltaX + "/" + e.deltaY + "/" + e.deltaZ
     }
   }
 
