@@ -122,6 +122,18 @@ class Visualizer(stream: js.Dynamic) {
       // deltaY
       diffDiv.innerHTML = "" + e.deltaX + "/" + e.deltaY + "/" + e.deltaZ
     }
+    canvas.addEventListener("touchstart", (e: TouchEvent) => {
+      down = true
+      startPos = (e.touches(0).clientX, e.touches(0).clientY)
+    })
+    canvas.addEventListener("touchend", (e: TouchEvent) => {
+      down = false;
+    })
+    canvas.addEventListener("touchmove", (e: TouchEvent) => {
+      val xDiff = e.touches(0).clientX - startPos._1
+      val yDiff = e.touches(0).clientY - startPos._2
+      diffDiv.innerHTML = "(" + xDiff + ", " + yDiff + ")"
+    })
   }
 
   def render(t: Double) = {
