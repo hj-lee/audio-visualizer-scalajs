@@ -21,8 +21,8 @@ class Analyser(stream: js.Dynamic) {
   val source = audioContext.createMediaStreamSource(stream.asInstanceOf[MediaStream])
   source.connect(analyser)
 
-  var minShowingFrequency = 80.0
-  var maxShowingFrequency = 12000.0
+  var minShowingFrequency = 40.0
+  var maxShowingFrequency = 16000.0
 
   val defaultFftSize: Int = calcDefaultFftSize
 

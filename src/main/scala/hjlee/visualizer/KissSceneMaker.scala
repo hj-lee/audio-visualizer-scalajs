@@ -55,7 +55,7 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
 
   var nOfObject = 30
   val prevObjects: mutable.ArrayBuffer[Line] = mutable.ArrayBuffer()
-  val zStep: Double = -50
+  val zStep: Double = -200
   val keepStep = 1
 
   override def render(): Unit = {
