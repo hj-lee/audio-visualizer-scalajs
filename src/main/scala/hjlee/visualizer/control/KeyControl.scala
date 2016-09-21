@@ -6,22 +6,23 @@ import org.scalajs.dom.KeyboardEvent
 import scalatags.JsDom.all._
 import collection.mutable
 
+
 /**
   * Created by hjlee on 9/20/16.
   */
 class KeyControl {
-  val codeActionMap: mutable.Map[String, () => Unit] = mutable.Map()
+  val codeActionMap: mutable.Map[Int, () => Unit] = mutable.Map()
 
   val onkeydown = (e: KeyboardEvent) => {
-    println(e.key)
-    codeActionMap.get(e.key).foreach(action => {
+    println(e.keyCode)
+    codeActionMap.get(e.keyCode).foreach(action => {
       action()
       e.preventDefault()
     })
   }
 
-  def addKeyAction(key: String, description: String)(action: () => Unit) = {
-    codeActionMap.update(key, action)
+  def addKeyAction(keyCode: Int, description: String)(action: => Unit) = {
+    codeActionMap.update(keyCode, () => action)
   }
 
   def render() = {

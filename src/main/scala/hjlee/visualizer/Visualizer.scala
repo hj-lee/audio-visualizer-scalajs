@@ -7,6 +7,8 @@ import dom._
 import hjlee.visualizer.control.{CameraControl, KeyControl}
 import hjlee.visualizer.jsFacade.Stats
 
+import org.scalajs.dom.ext.KeyCode
+
 import scala.collection.mutable.ArrayBuffer
 //import org.scalajs.jquery.{JQueryEventObject, jQuery}
 
@@ -100,22 +102,22 @@ class Visualizer(stream: js.Dynamic) {
 
     document.onkeydown = keyControl.onkeydown
 
-    keyControl.addKeyAction("ArrowUp", "r up")(()=>{
+    keyControl.addKeyAction(KeyCode.Up, "r up"){
       cameraControl.angleX += 1 * Math.PI/180
       cameraControl.setCamera()
-    })
-    keyControl.addKeyAction("ArrowDown", "r down")(()=>{
+    }
+    keyControl.addKeyAction(KeyCode.Down, "r down"){
       cameraControl.angleX -= 1 * Math.PI/180
       cameraControl.setCamera()
-    })
-    keyControl.addKeyAction("ArrowRight", "r right")(()=>{
-      cameraControl.angleY -= 1 * Math.PI/180
-      cameraControl.setCamera()
-    })
-    keyControl.addKeyAction("ArrowLeft", "r left")(()=>{
+    }
+    keyControl.addKeyAction(KeyCode.Right, "r right"){
       cameraControl.angleY += 1 * Math.PI/180
       cameraControl.setCamera()
-    })
+    }
+    keyControl.addKeyAction(KeyCode.Left, "r left"){
+      cameraControl.angleY -= 1 * Math.PI/180
+      cameraControl.setCamera()
+    }
 
   }
 
