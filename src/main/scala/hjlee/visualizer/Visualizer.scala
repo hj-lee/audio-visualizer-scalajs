@@ -52,8 +52,8 @@ class Visualizer(stream: js.Dynamic) {
     windowResize()
 
     val content = document.getElementById("content")
-    val renderCanvas :HTMLCanvasElement = renderer.domElement
-    content.appendChild(renderCanvas)
+    val canvas :HTMLCanvasElement = renderer.domElement
+    content.appendChild(canvas)
     stats.dom.setAttribute("id", "stats")
 
     content.appendChild(stats.dom.asInstanceOf[Element])
@@ -61,16 +61,15 @@ class Visualizer(stream: js.Dynamic) {
       (e: Event) => {
         windowResize()
       }
-
-    renderControls(content, renderCanvas)
-
+    cameraControl.attachMouseControl(canvas)
+    renderControls(content, canvas)
     Visualizer.start(render, analyser.audioFrameLength * 1000 / 2)
   }
 
   def renderControls(content: Element, canvas: HTMLCanvasElement) = {
     val controlDiv =
       div(
-        id := "control",
+        id := "control-box",
         position := "absolute",
         top := "0px",
         right := "0px",
@@ -81,28 +80,45 @@ class Visualizer(stream: js.Dynamic) {
         //        display := "-webkit-flex",
         //        display := "flex",
         color := "green"
-      )(
-        div("control")
       ).render
     content.appendChild(controlDiv)
 
-    val buttonA = button("A").render
-    buttonA.onclick =
-      (e: dom.Event) => { buttonA.innerHTML = "A" + buttonA.innerHTML }
+    val hideControlBtn = button("Hide Controls").render
+    controlDiv.appendChild(hideControlBtn)
 
-    controlDiv.appendChild(buttonA)
-    val diffDiv = div().render
-    controlDiv.appendChild(diffDiv)
+    val controls = div(id := "controls").render
+    controlDiv.appendChild(controls)
 
-    cameraControl.attachMouseControl(canvas)
+    var showingControl = true
+    hideControlBtn.onclick = (e: dom.Event) => {
+      showingControl = !showingControl
+      hideControlBtn.innerHTML = if (showingControl) "Hide Controls" else "Show Controls"
+      controls.style.visibility = if (showingControl) "visible" else "hidden"
+    }
+
+//    controls.appendChild(keyControl.render)
+
+
   }
 
   def render(t: Double) = {
     sceneMaker.render()
   }
+
+//  def keyControl() = {
+//
+//    table(
+//      (0 to 5).map(i => {
+//        tr(td(i.toString))
+//      })
+//    )
+//  }
+
 }
 
 object Visualizer {
+
+
   var id : Int = 0
   def animationLoop(render: Double => Unit): Double => Unit = (t: Double) => {
     render(t)
@@ -118,5 +134,4 @@ object Visualizer {
       id = window.setInterval(() => render(window.performance.now()), interval)
     }
   }
-
 }
