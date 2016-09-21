@@ -4,7 +4,7 @@ import org.denigma.threejs._
 import org.scalajs.dom.raw.HTMLCanvasElement
 import org.scalajs.dom
 import dom._
-import hjlee.visualizer.control.CameraControl
+import hjlee.visualizer.control.{CameraControl, KeyControl}
 import hjlee.visualizer.jsFacade.Stats
 
 import scala.collection.mutable.ArrayBuffer
@@ -26,7 +26,7 @@ class Visualizer(stream: js.Dynamic) {
   val scene = new Scene()
   val renderer = new WebGLRenderer()
 
-
+  val keyControl = new KeyControl
 
   def windowResize(): Unit = {
     width = window.innerWidth
@@ -96,8 +96,26 @@ class Visualizer(stream: js.Dynamic) {
       controls.style.visibility = if (showingControl) "visible" else "hidden"
     }
 
-//    controls.appendChild(keyControl.render)
+    controls.appendChild(keyControl.render)
 
+    document.onkeydown = keyControl.onkeydown
+
+    keyControl.addKeyAction("ArrowUp", "r up")(()=>{
+      cameraControl.angleX += 1 * Math.PI/180
+      cameraControl.setCamera()
+    })
+    keyControl.addKeyAction("ArrowDown", "r down")(()=>{
+      cameraControl.angleX -= 1 * Math.PI/180
+      cameraControl.setCamera()
+    })
+    keyControl.addKeyAction("ArrowRight", "r right")(()=>{
+      cameraControl.angleY -= 1 * Math.PI/180
+      cameraControl.setCamera()
+    })
+    keyControl.addKeyAction("ArrowLeft", "r left")(()=>{
+      cameraControl.angleY += 1 * Math.PI/180
+      cameraControl.setCamera()
+    })
 
   }
 
@@ -105,14 +123,6 @@ class Visualizer(stream: js.Dynamic) {
     sceneMaker.render()
   }
 
-//  def keyControl() = {
-//
-//    table(
-//      (0 to 5).map(i => {
-//        tr(td(i.toString))
-//      })
-//    )
-//  }
 
 }
 
