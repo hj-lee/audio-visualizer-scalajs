@@ -68,6 +68,8 @@ class Visualizer(stream: js.Dynamic) {
     Visualizer.start(render, analyser.audioFrameLength * 1000 / 2)
   }
 
+  val moveStep: Int = 10
+
   def renderControls(content: Element, canvas: HTMLCanvasElement) = {
     val controlDiv =
       div(
@@ -102,6 +104,7 @@ class Visualizer(stream: js.Dynamic) {
 
     document.onkeydown = keyControl.onkeydown
 
+    // MARK
     keyControl.addKeyAction(KeyCode.Up, "r up"){
       cameraControl.angleX += 1 * Math.PI/180
       cameraControl.setCamera()
@@ -118,6 +121,32 @@ class Visualizer(stream: js.Dynamic) {
       cameraControl.angleY -= 1 * Math.PI/180
       cameraControl.setCamera()
     }
+    //
+    keyControl.addKeyAction(KeyCode.W, "t up"){
+      cameraControl.translation.y += moveStep
+      cameraControl.setCamera()
+    }
+    keyControl.addKeyAction(KeyCode.S, "t down"){
+      cameraControl.translation.y -= moveStep
+      cameraControl.setCamera()
+    }
+    keyControl.addKeyAction(KeyCode.D, "t right"){
+      cameraControl.translation.x += moveStep
+      cameraControl.setCamera()
+    }
+    keyControl.addKeyAction(KeyCode.A, "t left"){
+      cameraControl.translation.x -= moveStep
+      cameraControl.setCamera()
+    }
+    keyControl.addKeyAction(KeyCode.Q, "t forward"){
+      cameraControl.translation.z -= moveStep
+      cameraControl.setCamera()
+    }
+    keyControl.addKeyAction(KeyCode.Z, "t backward"){
+      cameraControl.translation.z += moveStep
+      cameraControl.setCamera()
+    }
+
 
   }
 
