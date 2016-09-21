@@ -1,28 +1,15 @@
 package hjlee.visualizer
 
-import org.denigma.threejs
-import threejs.{Camera, Color, Geometry, Line, LineBasicMaterial, LineMaterial, Material, Object3D, Vector3}
+import org.denigma.threejs.{Color, Geometry, Line, LineBasicMaterial, LineMaterial, Vector3}
 
-import scala.scalajs.js.typedarray.{Float32Array, Uint8Array}
-import scala.scalajs.js
 import scala.collection.mutable
-import org.scalajs.dom.window
-
-import js.Dynamic.{global => g}
-import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by hjlee on 9/14/16.
   */
 class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
-//  var preGeo: Option[Geometry] = None
-//  var preLine: Option[Line] = None
-
   val mat = new LineBasicMaterial()
   mat.color = new Color(0xffffff)
-
-//  val prevMat = new LineBasicMaterial()
-//  prevMat.color = new Color(0x00ff00)
 
   val nOfMaterials = 50
   val prevMats = new Array[LineMaterial](nOfMaterials)
@@ -51,8 +38,6 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
   //    def idxToX(i: Int): Double = app.analyser.sampleRate / app.analyser.fftSize * (i+1)
   //    def idxToX(i: Int): Double = Math.log(app.analyser.sampleRate / app.analyser.fftSize * (i+1))
 
-//  var prevRender = window.performance.now()
-
   var nOfObject = 30
   val prevObjects: mutable.ArrayBuffer[Line] = mutable.ArrayBuffer()
   val zStep: Double = -200
@@ -60,8 +45,7 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
 
   override def render(): Unit = {
     app.stats.begin()
-//    preLine.foreach(app.scene.remove(_))
-//    preGeo.foreach(_.dispose)
+    // remove old objects
     if (prevObjects.size >= nOfObject) {
       val oldObj = prevObjects(0)
       app.scene.remove(oldObj)
@@ -69,12 +53,13 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
       oldObj.material.dispose()
       prevObjects.remove(0)
     }
+
+    // process previous objects
     {
       if (keepStep <= 1) {
         prevObjects.indices.foreach(i => {
           val line = prevObjects(i)
           line.translateZ(zStep)
-          //        line.material = prevMats(i % nOfMaterials)
         })
       }
       else {
@@ -140,8 +125,6 @@ class KissSceneMaker(app: Visualizer) extends SceneMaker(app) {
 
     app.renderer.render(app.scene, app.cameraControl.camera)
 
-//    preGeo = Some(geometry)
-//    preLine = Some(line)
     prevObjects += line
     frameCnt += 1
     app.stats.end()

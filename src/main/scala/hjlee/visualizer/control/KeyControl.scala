@@ -1,10 +1,9 @@
 package hjlee.visualizer.control
 
-import org.scalajs.dom
 import org.scalajs.dom.KeyboardEvent
 
+import scala.collection.mutable
 import scalatags.JsDom.all._
-import collection.mutable
 
 
 /**
@@ -27,9 +26,9 @@ class KeyControl {
 
   def render() = {
     table(
-      (0 to 5).map(i => {
-        tr(td(i.toString))
-      })
+//      (0 to 5).map(i => {
+//        tr(td(i.toString))
+//      })
     ).render
   }
 }

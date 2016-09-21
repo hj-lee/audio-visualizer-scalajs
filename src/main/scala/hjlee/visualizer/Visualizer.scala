@@ -9,12 +9,10 @@ import hjlee.visualizer.jsFacade.Stats
 
 import org.scalajs.dom.ext.KeyCode
 
-import scala.collection.mutable.ArrayBuffer
-//import org.scalajs.jquery.{JQueryEventObject, jQuery}
-
 import scala.scalajs.js
-//import scala.scalajs.js.Dynamic.{global => g}
+
 import scalatags.JsDom.all._
+
 
 class Visualizer(stream: js.Dynamic) {
 
@@ -35,17 +33,12 @@ class Visualizer(stream: js.Dynamic) {
     // window.innerHeight-4 : to prevent scrollbars
     height = window.innerHeight-4
     renderer.setSize(width, height)
-    // camera with new aspect
     cameraControl.setSize(width, height)
-    // not working
-//    camera.asInstanceOf[js.Dynamic].fov = 15
-//    camera.asInstanceOf[js.Dynamic].aspect = width/height
     sceneMaker.setSize()
   }
 
 
   // SceneMakers need 'stats'
-//  val stats = js.Dynamic.newInstance(g.Stats)()
   val stats = new Stats();
 
   var sceneMaker : SceneMaker = new KissSceneMaker(this)
@@ -146,20 +139,14 @@ class Visualizer(stream: js.Dynamic) {
       cameraControl.translation.z += moveStep
       cameraControl.setCamera()
     }
-
-
   }
 
   def render(t: Double) = {
     sceneMaker.render()
   }
-
-
 }
 
 object Visualizer {
-
-
   var id : Int = 0
   def animationLoop(render: Double => Unit): Double => Unit = (t: Double) => {
     render(t)

@@ -1,11 +1,9 @@
 package hjlee.visualizer.control
 
-import hjlee.visualizer.Visualizer
 import org.denigma.threejs.{Camera, PerspectiveCamera, Vector3}
 import org.scalajs.dom
 import org.scalajs.dom.WheelEvent
 import org.scalajs.dom.html.Element
-import org.scalajs.dom.raw.HTMLElement
 
 /**
   * Created by hjlee on 9/19/16.
@@ -21,19 +19,16 @@ class CameraControl(var width: Double, var height: Double) {
 
   var angleX = 10 * Math.PI/180
   var angleY = 0 * Math.PI/180
-  var translation = new Vector3(0,0,0)
+  val translation = new Vector3(0,0,0)
   var distance = 4.1 * height
-  var poi = new Vector3(0, 0, 0)
+  val poi = new Vector3(0, 0, 0)
 
   def setSize(width: Double, height: Double) = {
     this.width = width
     this.height = height
+    // easiest way to reset aspect
     camera = newCamera()
-//    angleX = 0 * Math.PI/180
-//    angleY = 0 * Math.PI/180
-//    translation = new Vector3(0,0,0)
     distance = 4.1 * height
-    poi = new Vector3(0, 0, 0)
     setCamera()
   }
 

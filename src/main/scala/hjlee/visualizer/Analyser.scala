@@ -1,18 +1,16 @@
 package hjlee.visualizer
 
 import hjlee.visualizer.jsFacade.KissFFT
+
 import org.scalajs.dom.experimental.mediastream.MediaStream
 import org.scalajs.dom.raw.AudioContext
 
 import scala.scalajs.js
-import scala.scalajs.js.typedarray.Float32Array
-import js.Dynamic.{global => g}
+import js.typedarray.Float32Array
 
 /**
   * Created by hjlee on 9/14/16.
   */
-
-
 class Analyser(stream: js.Dynamic) {
   val audioContext = new AudioContext
   val analyser = audioContext.createAnalyser()
@@ -106,7 +104,6 @@ object Analyser {
   private var kissMap = scala.collection.mutable.Map[Int, KissFFT]()
 
   private def getKiss(fftSize: Int) = {
-//    kissMap.getOrElseUpdate(fftSize, js.Dynamic.newInstance(g.KissFFT)(fftSize))
     kissMap.getOrElseUpdate(fftSize, new KissFFT(fftSize))
   }
 }
