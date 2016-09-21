@@ -19,7 +19,7 @@ class CameraControl(var width: Double, var height: Double) {
   }
   var camera: Camera = newCamera()
 
-  var angleX = 0 * Math.PI/180
+  var angleX = 10 * Math.PI/180
   var angleY = 0 * Math.PI/180
   var translation = new Vector3(0,0,0)
   var distance = 4.1 * height
