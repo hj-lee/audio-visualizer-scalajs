@@ -4,13 +4,12 @@ import org.denigma.threejs._
 import org.scalajs.dom.raw.HTMLCanvasElement
 import org.scalajs.dom
 import dom._
-import hjlee.visualizer.control.{CameraControl, KeyControl}
+import hjlee.visualizer.control._
 import hjlee.visualizer.jsFacade.Stats
-
+import hjlee.visualizer.sceneMaker._
 import org.scalajs.dom.ext.KeyCode
 
 import scala.scalajs.js
-
 import scalatags.JsDom.all._
 
 
@@ -42,6 +41,7 @@ class Visualizer(stream: js.Dynamic) {
   val stats = new Stats();
 
   var sceneMaker : SceneMaker = new KissSceneMaker(this)
+//  var sceneMaker : SceneMaker = new WaveSceneMaker(this)
 
   def start(): Unit = {
     windowResize()

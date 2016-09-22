@@ -76,6 +76,11 @@ class Analyser(stream: js.Dynamic) {
     kissFft.forward(_timeData).asInstanceOf[Float32Array]
   }
 
+  def getTimeDomainData() = {
+    analyser.getFloatTimeDomainData(_timeData)
+    _timeData
+  }
+
   // helper methods
   private def calcDefaultFftSize: Int = {
     val expFrameRate = sampleRate / 15
