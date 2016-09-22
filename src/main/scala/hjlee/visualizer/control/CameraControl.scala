@@ -56,12 +56,16 @@ class CameraControl(var width: Double, var height: Double) {
     var down = false
     var baseAngleX = 0.0
     var baseAngleY = 0.0
+    var baseX = translation.x
+    var baseY = translation.y
 
     val onmousedown = (e: dom.MouseEvent) => {
       down = true
       startPos = (e.clientX, e.clientY)
       baseAngleX = angleX
       baseAngleY = angleY
+      baseX = translation.x
+      baseY = translation.y
     }
     val onmouseup = (e: dom.MouseEvent) => {
       down = false
@@ -71,8 +75,13 @@ class CameraControl(var width: Double, var height: Double) {
       if (down) {
         val xDiff = e.clientX - startPos._1
         val yDiff = e.clientY - startPos._2
-        angleX = baseAngleX + yDiff * Math.PI / 180
-        angleY = baseAngleY + xDiff * Math.PI / 180
+        if(e.shiftKey) {
+          translation.x = baseX - xDiff
+          translation.y = baseY + yDiff
+        } else {
+          angleX = baseAngleX + yDiff * Math.PI / 180
+          angleY = baseAngleY + xDiff * Math.PI / 180
+        }
         setCamera()
       }
     }
