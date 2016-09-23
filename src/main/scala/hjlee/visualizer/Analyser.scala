@@ -46,10 +46,10 @@ class Analyser(stream: js.Dynamic) {
     require(fftSize <= Analyser.MAX_FFT_SIZE)
     require(isPower2(fftSize))
 
-    println("fftsize " + analyser.fftSize)
-
     analyser.fftSize = fftSize
     analyser.smoothingTimeConstant = 0
+
+    println("fftsize " + analyser.fftSize)
 
     _audioFrameLength = fftSize.asInstanceOf[Double] / sampleRate
     _maxDrawIndex = Math.min(frequencyToIndex(maxShowingFrequency),

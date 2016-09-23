@@ -10,6 +10,8 @@ import scala.scalajs.js.typedarray.Float32Array
   * Created by hjlee on 9/22/16.
   */
 class WaveSceneMaker(app: Visualizer) extends SceneMaker(app) {
+  override val renderFramePerAudioFrame: Double = 1.0
+
   val mat = new LineBasicMaterial()
   mat.color = new Color(0xffffff)
 
@@ -54,7 +56,7 @@ class WaveSceneMaker(app: Visualizer) extends SceneMaker(app) {
       val oldObj = prevObjects(0)
       app.scene.remove(oldObj)
       oldObj.geometry.dispose()
-      oldObj.material.dispose()
+//      oldObj.material.dispose()
       prevObjects.remove(0)
     }
   }
@@ -156,6 +158,14 @@ class WaveSceneMaker(app: Visualizer) extends SceneMaker(app) {
   }
 
   //////////////////////////////////////////////////////////////////////////////
+  override def clear(): Unit = {
+    prevObjects.foreach(oldObj => {
+      app.scene.remove(oldObj)
+      oldObj.geometry.dispose()
+//      oldObj.material.dispose()
+    });
+    prevObjects.clear()
+  }
 
   override def finalize(): Unit = {
     super.finalize()

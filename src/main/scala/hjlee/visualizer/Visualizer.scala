@@ -41,11 +41,16 @@ class Visualizer(stream: js.Dynamic) {
   // SceneMakers need 'stats'
   val stats = new Stats();
 
+  val sceneMakers = Array(
+    new DualSceneMaker(this),
+    new WaveSceneMaker(this),
+    new KissSceneMaker(this)
+  )
+  var sceneMakerIdx = 0
 //  var sceneMaker : SceneMaker = new KissSceneMaker(this)
 //  var sceneMaker : SceneMaker = new WaveSceneMaker(this)
-  println("app - before sceneMaker")
-  var sceneMaker: SceneMaker = new DualSceneMaker(this)
-  println("app - after sceneMaker")
+  var sceneMaker: SceneMaker = sceneMakers(sceneMakerIdx)
+
 
   def start(): Unit = {
     windowResize()
@@ -62,9 +67,13 @@ class Visualizer(stream: js.Dynamic) {
       }
     cameraControl.attachMouseControl(canvas)
     renderControls(content, canvas)
-    Visualizer.start(render, analyser.audioFrameLength * 1000 / 2.0)
+    startRender()
   }
 
+
+  def startRender(): Unit = {
+    Visualizer.start(render, analyser.audioFrameLength * 1000 / sceneMaker.renderFramePerAudioFrame)
+  }
 
   def renderControls(content: Element, canvas: HTMLCanvasElement) = {
     val controlDiv =
@@ -142,6 +151,39 @@ class Visualizer(stream: js.Dynamic) {
       cameraControl.translation.z += moveStep
       cameraControl.setCamera()
     }
+    // fftsize
+    keyControl.addKeyAction(KeyCode.Num1, "freq down"){
+      val old = analyser.fftSize
+      var newSize = old /2
+      if (newSize < 512) newSize = 512
+      if (old != newSize) analyser.fftSize = newSize
+      startRender()
+    }
+    keyControl.addKeyAction(KeyCode.Num2, "freq up"){
+      val old = analyser.fftSize
+      var newSize = old * 2
+      if (newSize > 32768) newSize = 32768
+      if (old != newSize) analyser.fftSize = newSize
+      startRender()
+    }
+    // new sceneMaker
+    keyControl.addKeyAction(KeyCode.Num9, "prev sm"){
+      sceneMakerIdx = (sceneMakerIdx - 1 + sceneMakers.length) % sceneMakers.length
+      val newSceneMaker = sceneMakers(sceneMakerIdx)
+      newSceneMaker.setSize(width, height)
+      sceneMaker.clear()
+      sceneMaker = newSceneMaker
+      startRender()
+    }
+    keyControl.addKeyAction(KeyCode.Num0, "next sm"){
+      sceneMakerIdx = (sceneMakerIdx + 1) % sceneMakers.length
+      val newSceneMaker = sceneMakers(sceneMakerIdx)
+      newSceneMaker.setSize(width, height)
+      sceneMaker.clear()
+      sceneMaker = newSceneMaker
+      startRender()
+    }
+
   }
 
   def render(t: Double) = {
@@ -150,6 +192,7 @@ class Visualizer(stream: js.Dynamic) {
 }
 
 object Visualizer {
+  var running = false;
   var id : Int = 0
   def animationLoop(render: Double => Unit): Double => Unit = (t: Double) => {
     render(t)
@@ -158,11 +201,18 @@ object Visualizer {
 
   def start(render: Double => Unit, interval: Double = 0) = {
     if (interval == 0) {
+      if (running) {
+        window.cancelAnimationFrame(id)
+      }
       val fun = animationLoop(render)
       id = window.requestAnimationFrame(fun)
     }
     else {
+      if (running) {
+        window.clearInterval(id)
+      }
       id = window.setInterval(() => render(window.performance.now()), interval)
     }
+    running = true
   }
 }

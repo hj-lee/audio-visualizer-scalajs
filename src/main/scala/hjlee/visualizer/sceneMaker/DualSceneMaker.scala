@@ -8,10 +8,19 @@ import scala.scalajs.js.typedarray.Float32Array
   * Created by hjlee on 9/22/16.
   */
 class DualSceneMaker(app: Visualizer) extends SceneMaker(app) {
-//  println("DualSceneMaker")
-  val waveMaker = new WaveSceneMaker(app)
+//  private[this] var _renderFrame = 2.0
+//  override def renderFramePerAudioFrame = _renderFrame
+
+  override def renderFramePerAudioFrame: Double = fftMaker.renderFramePerAudioFrame
+
   val fftMaker = new KissSceneMaker(app)
-//  println("DualSceneMaker: after making")
+
+  val waveMaker = new WaveSceneMaker(app) {
+    override def getIndexRange(): (Int, Int) = (
+      (app.analyser.fftSize - app.analyser.fftSize / renderFramePerAudioFrame).asInstanceOf[Int],
+      app.analyser.fftSize-1)
+  }
+
 
   override def render(): Unit = {
     app.stats.begin()
@@ -30,5 +39,10 @@ class DualSceneMaker(app: Visualizer) extends SceneMaker(app) {
     fftMaker.setSize(width/2,height/2)
     waveMaker.center.x = -width/3.9
     fftMaker.center.x = width/3.9
+  }
+
+  override def clear(): Unit = {
+    waveMaker.clear()
+    fftMaker.clear()
   }
 }

@@ -11,6 +11,7 @@ import scala.scalajs.js.typedarray.Float32Array
   * Created by hjlee on 9/14/16.
   */
 class KissSceneMaker(app: Visualizer) extends WaveSceneMaker(app) {
+  override val renderFramePerAudioFrame: Double = 2.0
 
   var lxFactor = width / Math.log(width)
 
