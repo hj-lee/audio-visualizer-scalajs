@@ -34,6 +34,7 @@ class Analyser(stream: js.Dynamic) {
   def maxDrawIndex: Int = _maxDrawIndex
 
   private[this] var _timeData : Float32Array = new Float32Array(0)
+  private[this] var _kissFft = Analyser.getKiss(defaultFftSize)
   // initialize
   fftSize = defaultFftSize
 
@@ -63,6 +64,7 @@ class Analyser(stream: js.Dynamic) {
     if(_timeData.length != fftSize) {
       _timeData = new Float32Array(fftSize)
     }
+    _kissFft = Analyser.getKiss(fftSize)
   }
 
   // delegate methods
@@ -71,14 +73,17 @@ class Analyser(stream: js.Dynamic) {
   def frequencyBinCount = analyser.frequencyBinCount
 
   def getFrequencyData() = {
-    val kissFft = Analyser.getKiss(fftSize)
     analyser.getFloatTimeDomainData(_timeData)
-    kissFft.forward(_timeData).asInstanceOf[Float32Array]
+    _kissFft.forward(_timeData)
   }
 
   def getTimeDomainData() = {
     analyser.getFloatTimeDomainData(_timeData)
     _timeData
+  }
+  def getTimeDomainFrequencyData() = {
+    analyser.getFloatTimeDomainData(_timeData)
+    (_timeData, _kissFft.forward(_timeData))
   }
 
   // helper methods

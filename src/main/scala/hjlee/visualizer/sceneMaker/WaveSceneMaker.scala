@@ -23,9 +23,10 @@ class WaveSceneMaker(app: Visualizer) extends SceneMaker(app) {
 
   val skipXdiff: Double = 0.5
 
+  val center = new Vector3()
+
   var frameCnt = 0
 
-  setSize()
   prepareMaterials()
 
   /////////////////////////////////////////////////////////////////////
@@ -101,21 +102,15 @@ class WaveSceneMaker(app: Visualizer) extends SceneMaker(app) {
   }
 
   def getYZ(out: Float32Array, i: Int): (Double, Double) = {
-    (out(i) * app.height / 2, 0)
+    (out(i) * height / 2, 0)
   }
   //
   /**
     * render
     */
-  override def render(): Unit = {
-    app.stats.begin()
-
+  def addDataToScene(out: Float32Array): Unit = {
     removeOldObjects()
     processOldObjects()
-
-    val out: Float32Array = getData()
-
-    val width = app.width
 
     val geometry = new Geometry
     var preLx: Double = -100000
@@ -125,33 +120,42 @@ class WaveSceneMaker(app: Visualizer) extends SceneMaker(app) {
     val minX = idxToX(minIdx)
     val maxX = idxToX(maxIdx)
     val xWidth = maxX - minX
+
+
     for (i <- minIdx to maxIdx) {
       val x = idxToX(i)
-      val (y,z) = getYZ(out, i)
+      val (y, z) = getYZ(out, i)
 
-      val lx = ((x - minX) - xWidth/2) * width / xWidth
+      val lx = ((x - minX) - xWidth / 2) * width / xWidth
       if (lx - preLx > skipXdiff || i == maxIdx) {
         geometry.vertices.push(new Vector3(lx, y, z))
         preLx = lx
       }
     }
-    geometry.vertices.push(new Vector3(width/2,0,0))
-    geometry.vertices.push(new Vector3(-width/2,0,0))
+    geometry.vertices.push(new Vector3(width / 2, 0 , 0))
+    geometry.vertices.push(new Vector3(-width / 2, 0, 0))
 
     val line = new Line(geometry, mat)
+    if(center.x != 0) line.translateX(center.x)
+    if(center.y != 0) line.translateY(center.y)
+    if(center.z != 0) line.translateZ(center.z)
     app.scene.add(line)
-
-    app.renderer.render(app.scene, app.cameraControl.camera)
 
     prevObjects += line
     frameCnt += 1
+  }
+  override def render(): Unit = {
+    app.stats.begin()
+
+    val out: Float32Array = getData()
+
+    addDataToScene(out)
+
+    app.renderer.render(app.scene, app.cameraControl.camera)
     app.stats.end()
   }
 
-
   //////////////////////////////////////////////////////////////////////////////
-
-
 
   override def finalize(): Unit = {
     super.finalize()
@@ -163,5 +167,4 @@ class WaveSceneMaker(app: Visualizer) extends SceneMaker(app) {
       mat.dispose()
     })
   }
-
 }

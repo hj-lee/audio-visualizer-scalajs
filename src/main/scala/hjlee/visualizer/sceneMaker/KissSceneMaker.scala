@@ -12,13 +12,13 @@ import scala.scalajs.js.typedarray.Float32Array
   */
 class KissSceneMaker(app: Visualizer) extends WaveSceneMaker(app) {
 
-  var lxFactor = app.width / Math.log(app.width)
+  var lxFactor = width / Math.log(width)
 
   /////////////////////////////////////////////////////////////////////
   //
-  override def setSize(): Unit = {
-    super.setSize()
-    lxFactor = app.width / Math.log(app.width)
+  override def setSize(width: Double, height: Double): Unit = {
+    super.setSize(width, height)
+    lxFactor = width / Math.log(width)
   }
 
   ////////////////////////////////////////////////////////

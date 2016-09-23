@@ -33,15 +33,19 @@ class Visualizer(stream: js.Dynamic) {
     height = window.innerHeight-4
     renderer.setSize(width, height)
     cameraControl.setSize(width, height)
-    sceneMaker.setSize()
+    sceneMaker.setSize(width, height)
   }
 
+  val moveStep: Int = 10
 
   // SceneMakers need 'stats'
   val stats = new Stats();
 
-  var sceneMaker : SceneMaker = new KissSceneMaker(this)
+//  var sceneMaker : SceneMaker = new KissSceneMaker(this)
 //  var sceneMaker : SceneMaker = new WaveSceneMaker(this)
+  println("app - before sceneMaker")
+  var sceneMaker: SceneMaker = new DualSceneMaker(this)
+  println("app - after sceneMaker")
 
   def start(): Unit = {
     windowResize()
@@ -58,10 +62,9 @@ class Visualizer(stream: js.Dynamic) {
       }
     cameraControl.attachMouseControl(canvas)
     renderControls(content, canvas)
-    Visualizer.start(render, analyser.audioFrameLength * 1000 / 2)
+    Visualizer.start(render, analyser.audioFrameLength * 1000 / 2.0)
   }
 
-  val moveStep: Int = 10
 
   def renderControls(content: Element, canvas: HTMLCanvasElement) = {
     val controlDiv =

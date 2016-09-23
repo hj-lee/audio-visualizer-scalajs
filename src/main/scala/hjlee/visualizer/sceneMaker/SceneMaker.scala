@@ -9,7 +9,16 @@ import scala.scalajs.js.Dynamic.{global => g}
   */
 abstract class SceneMaker(app: Visualizer) {
   def render()
-  def setSize() = {}
+
+  var width: Double = 0
+  var height: Double = 0
+
+//  setSize(app.width, app.height)
+
+  def setSize(width: Double, height: Double) = {
+    this.width = width
+    this.height = height
+  }
 }
 
 object SceneMaker {
