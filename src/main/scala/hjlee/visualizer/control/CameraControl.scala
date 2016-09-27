@@ -9,16 +9,14 @@ import org.scalajs.dom.html.Element
   * Created by hjlee on 9/19/16.
   */
 class CameraControl(var width: Double, var height: Double) {
-//  var width = app.width
-//  var height = app.height
 
   def newCamera() = {
     new PerspectiveCamera(15, width/height, 0.1, 20000)
   }
   var camera: Camera = newCamera()
 
-  var angleX = 10 * Math.PI/180
-  var angleY = 0 * Math.PI/180
+  val angleXdeg = new CircularVariable(10, 1, -180, 180)
+  val angleYdeg = new CircularVariable(0, 1, -180, 180)
   val translation = new Vector3(0,0,0)
   var distance = 4.1 * height
   val poi = new Vector3(0, 0, 0)
@@ -34,6 +32,9 @@ class CameraControl(var width: Double, var height: Double) {
 
 
   def setCamera() = {
+    val angleX = angleXdeg.get * Math.PI/180
+    val angleY = angleYdeg.get * Math.PI/180
+
     camera.position.x = poi.x +
       distance * Math.sin(angleY)
     camera.position.y = poi.y +
@@ -62,8 +63,8 @@ class CameraControl(var width: Double, var height: Double) {
     val onmousedown = (e: dom.MouseEvent) => {
       down = true
       startPos = (e.clientX, e.clientY)
-      baseAngleX = angleX
-      baseAngleY = angleY
+      baseAngleX = angleXdeg.get
+      baseAngleY = angleYdeg.get
       baseX = translation.x
       baseY = translation.y
     }
@@ -79,8 +80,8 @@ class CameraControl(var width: Double, var height: Double) {
           translation.x = baseX - xDiff
           translation.y = baseY + yDiff
         } else {
-          angleX = baseAngleX + yDiff * Math.PI / 180
-          angleY = baseAngleY + xDiff * Math.PI / 180
+          angleXdeg.set(baseAngleX + yDiff.asInstanceOf[Int])
+          angleYdeg.set(baseAngleY + xDiff.asInstanceOf[Int])
         }
         setCamera()
       }

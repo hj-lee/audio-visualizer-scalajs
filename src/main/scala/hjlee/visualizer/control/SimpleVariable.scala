@@ -5,24 +5,22 @@ import scala.math.ScalaNumber
 /**
   * Created by hjlee on 9/26/16.
   */
-class SimpleVariable[T](val initial: T, val increment: T)(implicit num: Numeric[T]) extends ControlVariable[T]{
+class SimpleVariable(val initial: Double, val increment: Double) extends ControlVariable{
   var value = initial
-  import num._
-//  type T = Int
 
-  override def get: T = value
+  override def get: Double = value
 
-  override def inc: T = {
-    value += increment
+  override def inc(steps: Int = 1): Double = {
+    value += increment * steps
     value
   }
 
-  override def dec: T = {
-    value -= increment
+  override def dec(steps: Int = 1): Double = {
+    value -= increment * steps
     value
   }
 
-  override def set(v: T): Unit = {
+  override def set(v: Double): Unit = {
     value = v
   }
 }

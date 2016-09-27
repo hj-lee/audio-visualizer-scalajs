@@ -3,10 +3,10 @@ package hjlee.visualizer.control
 /**
   * Created by hjlee on 9/26/16.
   */
-trait ControlVariable[T] {
-  def get: T
-  def inc: T
-  def dec: T
-  def set(v: T): Unit
+trait ControlVariable {
+  def get: Double
+  def inc(steps: Int = 1): Double
+  def dec(steps: Int = 1): Double
+  def set(v: Double): Unit
 }
 

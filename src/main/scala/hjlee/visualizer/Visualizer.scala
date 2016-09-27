@@ -111,19 +111,19 @@ class Visualizer(stream: js.Dynamic) {
 
     // MARK
     keyControl.addKeyAction(KeyCode.Up, "r up"){
-      cameraControl.angleX += 1 * Math.PI/180
+      cameraControl.angleXdeg.inc()
       cameraControl.setCamera()
     }
     keyControl.addKeyAction(KeyCode.Down, "r down"){
-      cameraControl.angleX -= 1 * Math.PI/180
+      cameraControl.angleXdeg.dec()
       cameraControl.setCamera()
     }
     keyControl.addKeyAction(KeyCode.Right, "r right"){
-      cameraControl.angleY += 1 * Math.PI/180
+      cameraControl.angleYdeg.inc()
       cameraControl.setCamera()
     }
     keyControl.addKeyAction(KeyCode.Left, "r left"){
-      cameraControl.angleY -= 1 * Math.PI/180
+      cameraControl.angleYdeg.dec()
       cameraControl.setCamera()
     }
     //
