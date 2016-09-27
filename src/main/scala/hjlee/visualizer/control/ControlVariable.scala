@@ -5,8 +5,8 @@ package hjlee.visualizer.control
   */
 trait ControlVariable {
   def get: Double
-  def inc(steps: Int = 1): Double
-  def dec(steps: Int = 1): Double
+  def inc(steps: Int = 1): Unit
+  def dec(steps: Int = 1): Unit
   def set(v: Double): Unit
 }
 
