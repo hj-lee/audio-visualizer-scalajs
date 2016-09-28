@@ -155,14 +155,14 @@ class Visualizer(stream: js.Dynamic) {
     keyControl.addKeyAction(KeyCode.Num1, "freq down"){
       val old = analyser.fftSize
       var newSize = old /2
-      if (newSize < 512) newSize = 512
+      if (newSize < Analyser.MIN_FFT_SIZE) newSize = Analyser.MIN_FFT_SIZE
       if (old != newSize) analyser.fftSize = newSize
       startRender()
     }
     keyControl.addKeyAction(KeyCode.Num2, "freq up"){
       val old = analyser.fftSize
       var newSize = old * 2
-      if (newSize > 32768) newSize = 32768
+      if (newSize > Analyser.MAX_FFT_SIZE) newSize = Analyser.MAX_FFT_SIZE
       if (old != newSize) analyser.fftSize = newSize
       startRender()
     }
