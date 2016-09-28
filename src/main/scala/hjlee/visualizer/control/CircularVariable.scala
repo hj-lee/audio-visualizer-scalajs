@@ -6,19 +6,20 @@ package hjlee.visualizer.control
 class CircularVariable(initial: Double, inc: Double, val lower: Double, val upper: Double)
   extends SimpleVariable(initial, inc) {
 
+
   val range = upper - lower
-  override def inc(steps: Int = 1): Unit = {
-    super.inc(steps)
+  override def incImpl(steps: Int = 1): Unit = {
+    super.incImpl(steps)
     _circle()
   }
 
-  override def dec(steps: Int = 1): Unit = {
-    super.dec(steps)
+  override def decImpl(steps: Int = 1): Unit = {
+    super.decImpl(steps)
     _circle()
   }
 
-  override def set(v: Double): Unit = {
-    super.set(v)
+  override def setImpl(v: Double): Unit = {
+    super.setImpl(v)
     _circle()
   }
 

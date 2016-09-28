@@ -94,7 +94,6 @@ class CameraControl(var width: Double, var height: Double) {
       }
     }
     val onmousewheel = (e: WheelEvent) => {
-//      translation.z += e.deltaY
       val sign = Math.signum(e.deltaY)
       trZ.inc(sign.asInstanceOf[Int])
       setCamera()
@@ -107,45 +106,49 @@ class CameraControl(var width: Double, var height: Double) {
     canvas.onmousewheel = onmousewheel
   }
 
-  def attachKeyControl(keyControl: KeyControler) = {
-    keyControl.addKeyAction(KeyCode.Up, "r up") {
-      this.angleXdeg.inc()
-      this.setCamera()
-    }
-    keyControl.addKeyAction(KeyCode.Down, "r down") {
-      this.angleXdeg.dec()
-      this.setCamera()
-    }
-    keyControl.addKeyAction(KeyCode.Right, "r right") {
+  def attachKeyControl(keyControler: KeyControler) = {
+//    keyControl.addKeyAction(KeyCode.Up, "r up") {
+//      this.angleXdeg.inc()
+//      this.setCamera()
+//    }
+//    keyControl.addKeyAction(KeyCode.Down, "r down") {
+//      this.angleXdeg.dec()
+//      this.setCamera()
+//    }
+    keyControler.addKeyContorl(
+      angleXdeg.makeKeyControl("Angle X:", KeyCode.Down, "Down", KeyCode.Up, "Up", {this.setCamera()})
+    )
+
+    keyControler.addKeyAction(KeyCode.Right, "r right") {
       this.angleYdeg.inc()
       this.setCamera()
     }
-    keyControl.addKeyAction(KeyCode.Left, "r left") {
+    keyControler.addKeyAction(KeyCode.Left, "r left") {
       this.angleYdeg.dec()
       this.setCamera()
     }
     //
-    keyControl.addKeyAction(KeyCode.W, "t up") {
+    keyControler.addKeyAction(KeyCode.W, "t up") {
       this.trY.inc()
       this.setCamera()
     }
-    keyControl.addKeyAction(KeyCode.S, "t down") {
+    keyControler.addKeyAction(KeyCode.S, "t down") {
       this.trY.dec()
       this.setCamera()
     }
-    keyControl.addKeyAction(KeyCode.D, "t right") {
+    keyControler.addKeyAction(KeyCode.D, "t right") {
       this.trX.inc()
       this.setCamera()
     }
-    keyControl.addKeyAction(KeyCode.A, "t left") {
+    keyControler.addKeyAction(KeyCode.A, "t left") {
       this.trX.dec()
       this.setCamera()
     }
-    keyControl.addKeyAction(KeyCode.Q, "t forward") {
+    keyControler.addKeyAction(KeyCode.Q, "t forward") {
       this.trZ.dec()
       this.setCamera()
     }
-    keyControl.addKeyAction(KeyCode.Z, "t backward") {
+    keyControler.addKeyAction(KeyCode.Z, "t backward") {
       this.trZ.inc()
       this.setCamera()
     }

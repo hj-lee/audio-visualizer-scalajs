@@ -25,7 +25,7 @@ class Visualizer(stream: js.Dynamic) {
   val scene = new Scene()
   val renderer = new WebGLRenderer()
 
-  val keyControl = new KeyControler
+  val keyControler = new KeyControler
 
   def windowResize(): Unit = {
     width = window.innerWidth
@@ -82,13 +82,14 @@ class Visualizer(stream: js.Dynamic) {
         position := "absolute",
         top := "0px",
         right := "0px",
+        textAlign := "right",
         //        zIndex := 9000,
         //        display := "-webkit-box",
         //        display := "-moz-box",
         //        display := "-ms-flexbox",
         //        display := "-webkit-flex",
         //        display := "flex",
-        color := "green"
+        color := "white"
       ).render
     content.appendChild(controlDiv)
 
@@ -105,22 +106,20 @@ class Visualizer(stream: js.Dynamic) {
       controls.style.visibility = if (showingControl) "visible" else "hidden"
     }
 
-    controls.appendChild(keyControl.render)
-
-    document.onkeydown = keyControl.onkeydown
+    document.onkeydown = keyControler.onkeydown
 
     // MARK
-    cameraControl.attachKeyControl(keyControl)
+    cameraControl.attachKeyControl(keyControler)
 
     // fftsize
-    keyControl.addKeyAction(KeyCode.Num1, "freq down"){
+    keyControler.addKeyAction(KeyCode.Num1, "freq down"){
       val old = analyser.fftSize
       var newSize = old /2
       if (newSize < Analyser.MIN_FFT_SIZE) newSize = Analyser.MIN_FFT_SIZE
       if (old != newSize) analyser.fftSize = newSize
       startRender()
     }
-    keyControl.addKeyAction(KeyCode.Num2, "freq up"){
+    keyControler.addKeyAction(KeyCode.Num2, "freq up"){
       val old = analyser.fftSize
       var newSize = old * 2
       if (newSize > Analyser.MAX_FFT_SIZE) newSize = Analyser.MAX_FFT_SIZE
@@ -128,7 +127,7 @@ class Visualizer(stream: js.Dynamic) {
       startRender()
     }
     // new sceneMaker
-    keyControl.addKeyAction(KeyCode.Num9, "prev sm"){
+    keyControler.addKeyAction(KeyCode.Num9, "prev sm"){
       sceneMakerIdx = (sceneMakerIdx - 1 + sceneMakers.length) % sceneMakers.length
       val newSceneMaker = sceneMakers(sceneMakerIdx)
       newSceneMaker.setSize(width, height)
@@ -136,7 +135,7 @@ class Visualizer(stream: js.Dynamic) {
       sceneMaker = newSceneMaker
       startRender()
     }
-    keyControl.addKeyAction(KeyCode.Num0, "next sm"){
+    keyControler.addKeyAction(KeyCode.Num0, "next sm"){
       sceneMakerIdx = (sceneMakerIdx + 1) % sceneMakers.length
       val newSceneMaker = sceneMakers(sceneMakerIdx)
       newSceneMaker.setSize(width, height)
@@ -145,6 +144,7 @@ class Visualizer(stream: js.Dynamic) {
       startRender()
     }
 
+    controls.appendChild(keyControler.render)
   }
 
   def render(t: Double) = {

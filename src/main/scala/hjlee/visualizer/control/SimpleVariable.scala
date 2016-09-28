@@ -10,15 +10,15 @@ class SimpleVariable(val initial: Double, val increment: Double) extends Control
 
   override def get: Double = value
 
-  override def inc(steps: Int = 1): Unit = {
+  override def incImpl(steps: Int = 1): Unit = {
     value += increment * steps
   }
 
-  override def dec(steps: Int = 1): Unit = {
+  override def decImpl(steps: Int = 1): Unit = {
     value -= increment * steps
   }
 
-  override def set(v: Double): Unit = {
+  override def setImpl(v: Double): Unit = {
     value = v
   }
 }
