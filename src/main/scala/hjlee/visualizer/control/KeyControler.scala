@@ -38,9 +38,6 @@ class KeyControler {
 
   def render() = {
     table(
-//      (0 to 5).map(i => {
-//        tr(td(i.toString))
-//      })
       keyControls.map{kc =>
         kc.genTableRow()
       }

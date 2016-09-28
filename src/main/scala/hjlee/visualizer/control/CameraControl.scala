@@ -107,51 +107,55 @@ class CameraControl(var width: Double, var height: Double) {
   }
 
   def attachKeyControl(keyControler: KeyControler) = {
-//    keyControl.addKeyAction(KeyCode.Up, "r up") {
-//      this.angleXdeg.inc()
-//      this.setCamera()
-//    }
-//    keyControl.addKeyAction(KeyCode.Down, "r down") {
-//      this.angleXdeg.dec()
-//      this.setCamera()
-//    }
     keyControler.addKeyContorl(
-      angleXdeg.makeKeyControl("Angle X:", KeyCode.Down, "Down", KeyCode.Up, "Up", {this.setCamera()})
+      angleYdeg.makeKeyControl("Rotate Y:", KeyCode.Left, "Left", KeyCode.Right, "Right", {this.setCamera()})
+    )
+    keyControler.addKeyContorl(
+      angleXdeg.makeKeyControl("Rotate X:", KeyCode.Down, "Down", KeyCode.Up, "Up", {this.setCamera()})
+    )
+    keyControler.addKeyContorl(
+      trX.makeKeyControl("Move X:", KeyCode.A, "A", KeyCode.D, "D", {this.setCamera()})
+    )
+    keyControler.addKeyContorl(
+      trY.makeKeyControl("Move Y:", KeyCode.S, "S", KeyCode.W, "W", {this.setCamera()})
+    )
+    keyControler.addKeyContorl(
+      trZ.makeKeyControl("Move Z:", KeyCode.Q, "Q", KeyCode.Z, "Z", {this.setCamera()})
     )
 
-    keyControler.addKeyAction(KeyCode.Right, "r right") {
-      this.angleYdeg.inc()
-      this.setCamera()
-    }
-    keyControler.addKeyAction(KeyCode.Left, "r left") {
-      this.angleYdeg.dec()
-      this.setCamera()
-    }
+//    keyControler.addKeyAction(KeyCode.Right, "r right") {
+//      this.angleYdeg.inc()
+//      this.setCamera()
+//    }
+//    keyControler.addKeyAction(KeyCode.Left, "r left") {
+//      this.angleYdeg.dec()
+//      this.setCamera()
+//    }
     //
-    keyControler.addKeyAction(KeyCode.W, "t up") {
-      this.trY.inc()
-      this.setCamera()
-    }
-    keyControler.addKeyAction(KeyCode.S, "t down") {
-      this.trY.dec()
-      this.setCamera()
-    }
-    keyControler.addKeyAction(KeyCode.D, "t right") {
-      this.trX.inc()
-      this.setCamera()
-    }
-    keyControler.addKeyAction(KeyCode.A, "t left") {
-      this.trX.dec()
-      this.setCamera()
-    }
-    keyControler.addKeyAction(KeyCode.Q, "t forward") {
-      this.trZ.dec()
-      this.setCamera()
-    }
-    keyControler.addKeyAction(KeyCode.Z, "t backward") {
-      this.trZ.inc()
-      this.setCamera()
-    }
+//    keyControler.addKeyAction(KeyCode.W, "t up") {
+//      this.trY.inc()
+//      this.setCamera()
+//    }
+//    keyControler.addKeyAction(KeyCode.S, "t down") {
+//      this.trY.dec()
+//      this.setCamera()
+//    }
+//    keyControler.addKeyAction(KeyCode.D, "t right") {
+//      this.trX.inc()
+//      this.setCamera()
+//    }
+//    keyControler.addKeyAction(KeyCode.A, "t left") {
+//      this.trX.dec()
+//      this.setCamera()
+//    }
+//    keyControler.addKeyAction(KeyCode.Q, "t forward") {
+//      this.trZ.dec()
+//      this.setCamera()
+//    }
+//    keyControler.addKeyAction(KeyCode.Z, "t backward") {
+//      this.trZ.inc()
+//      this.setCamera()
+//    }
   }
 
 }
