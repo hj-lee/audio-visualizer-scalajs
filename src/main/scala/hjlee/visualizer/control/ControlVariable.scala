@@ -9,32 +9,36 @@ import scalatags.JsDom.all._
   * Created by hjlee on 9/26/16.
   */
 trait ControlVariable[T] {
-
-  def get: T
-  def inc(steps: Int = 1): Unit = {
-    incImpl(steps)
-    _notifyChange
+  protected var value: T
+  def get: T = value
+  def inc(): Unit = {
+    incImpl()
+    _notifyChange()
   }
-  def incImpl(steps: Int = 1): Unit
+  def incImpl(): Unit
   def dec(steps: Int = 1): Unit = {
-    decImpl(steps)
-    _notifyChange
+    decImpl()
+    _notifyChange()
   }
-  def decImpl(steps: Int = 1): Unit
+  def decImpl(): Unit
   def set(v: T): Unit = {
     setImpl(v)
-    _notifyChange
+    _notifyChange()
   }
   def setImpl(v: T): Unit
 
 
 
-  var contentTds: Option[TableCell] = None
+//  var observers: Option[TableCell] = None
+  private[this] val observers: mutable.ArrayBuffer[VariableObserver[T]] = mutable.ArrayBuffer()
 
-  protected def _notifyChange: Unit = {
-    contentTds.foreach { td =>
-      td.innerHTML = get.toString
-    }
+  def addObserver(ob : VariableObserver[T]) = observers += ob
+
+  protected def _notifyChange(): Unit = {
+    observers.foreach(_.changed(this))
+  }
+  protected def _toString(v: T): String = {
+    v.toString
   }
 
   def makeKeyControl(
@@ -57,8 +61,12 @@ trait ControlVariable[T] {
         )
       }
       override def genTableRow(): TypedTag[TableRow] = {
-        val contentTd = td(cv.get.toString).render
-        contentTds = Some(contentTd)
+        val contentTd = td(_toString(cv.get)).render
+        cv.addObserver(new VariableObserver[T] {
+          override def changed(cv: ControlVariable[T]): Unit = {
+            contentTd.innerHTML = _toString(cv.get)
+          }
+        })
         tr(
           td(title),
           td(button(onclick:= decAction)(decKey)),
@@ -80,3 +88,6 @@ object ControlVariable {
   }
 }
 
+trait VariableObserver[T] {
+  def changed(cv: ControlVariable[T])
+}

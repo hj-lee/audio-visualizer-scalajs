@@ -4,17 +4,17 @@ package hjlee.visualizer.control
   * Created by hjlee on 9/26/16.
   */
 class CircularVariable(initial: Double, inc: Double, val lower: Double, val upper: Double)
-  extends SimpleVariable(initial, inc) {
+  extends SimpleVariable[Double](initial, inc) {
 
 
   val range = upper - lower
-  override def incImpl(steps: Int = 1): Unit = {
-    super.incImpl(steps)
+  override def incImpl(): Unit = {
+    super.incImpl()
     _circle()
   }
 
-  override def decImpl(steps: Int = 1): Unit = {
-    super.decImpl(steps)
+  override def decImpl(): Unit = {
+    super.decImpl()
     _circle()
   }
 

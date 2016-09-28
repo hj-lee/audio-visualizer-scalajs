@@ -95,7 +95,7 @@ class CameraControl(var width: Double, var height: Double) {
     }
     val onmousewheel = (e: WheelEvent) => {
       val sign = Math.signum(e.deltaY)
-      trZ.inc(sign.asInstanceOf[Int])
+      trZ.set(trZ.get + sign * trZ.increment)
       setCamera()
     }
 
@@ -108,10 +108,10 @@ class CameraControl(var width: Double, var height: Double) {
 
   def attachKeyControl(keyControler: KeyControler) = {
     keyControler.addKeyContorl(
-      angleYdeg.makeKeyControl("Rotate Y:", KeyCode.Left, "Left", KeyCode.Right, "Right", {this.setCamera()})
+      angleXdeg.makeKeyControl("Rotate X:", KeyCode.Down, "Down", KeyCode.Up, "Up", {this.setCamera()})
     )
     keyControler.addKeyContorl(
-      angleXdeg.makeKeyControl("Rotate X:", KeyCode.Down, "Down", KeyCode.Up, "Up", {this.setCamera()})
+      angleYdeg.makeKeyControl("Rotate Y:", KeyCode.Left, "Left", KeyCode.Right, "Right", {this.setCamera()})
     )
     keyControler.addKeyContorl(
       trX.makeKeyControl("Move X:", KeyCode.A, "A", KeyCode.D, "D", {this.setCamera()})
