@@ -80,7 +80,7 @@ trait ControlVariable[T] {
 
 object ControlVariable {
   def newDegreeVar(initial: Double = 0, increment: Double = 1) = {
-    new CircularVariable(initial, increment, -180, 180)
+    new CircularDouble(initial, increment, -180, 180)
   }
 
   def newSimpleVar(initial: Double = 0, increment: Double = 1) = {
