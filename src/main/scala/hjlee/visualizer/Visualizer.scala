@@ -36,7 +36,7 @@ class Visualizer(stream: js.Dynamic) {
     sceneMaker.setSize(width, height)
   }
 
-  val moveStep: Int = 10
+
 
   // SceneMakers need 'stats'
   val stats = new Stats();
@@ -99,7 +99,7 @@ class Visualizer(stream: js.Dynamic) {
     controlDiv.appendChild(controls)
 
     var showingControl = true
-    hideControlBtn.onclick = (e: dom.Event) => {
+    hideControlBtn.onclick = (e: Event) => {
       showingControl = !showingControl
       hideControlBtn.innerHTML = if (showingControl) "Hide Controls" else "Show Controls"
       controls.style.visibility = if (showingControl) "visible" else "hidden"
@@ -110,47 +110,7 @@ class Visualizer(stream: js.Dynamic) {
     document.onkeydown = keyControl.onkeydown
 
     // MARK
-    keyControl.addKeyAction(KeyCode.Up, "r up"){
-      cameraControl.angleXdeg.inc()
-      cameraControl.setCamera()
-    }
-    keyControl.addKeyAction(KeyCode.Down, "r down"){
-      cameraControl.angleXdeg.dec()
-      cameraControl.setCamera()
-    }
-    keyControl.addKeyAction(KeyCode.Right, "r right"){
-      cameraControl.angleYdeg.inc()
-      cameraControl.setCamera()
-    }
-    keyControl.addKeyAction(KeyCode.Left, "r left"){
-      cameraControl.angleYdeg.dec()
-      cameraControl.setCamera()
-    }
-    //
-    keyControl.addKeyAction(KeyCode.W, "t up"){
-      cameraControl.translation.y += moveStep
-      cameraControl.setCamera()
-    }
-    keyControl.addKeyAction(KeyCode.S, "t down"){
-      cameraControl.translation.y -= moveStep
-      cameraControl.setCamera()
-    }
-    keyControl.addKeyAction(KeyCode.D, "t right"){
-      cameraControl.translation.x += moveStep
-      cameraControl.setCamera()
-    }
-    keyControl.addKeyAction(KeyCode.A, "t left"){
-      cameraControl.translation.x -= moveStep
-      cameraControl.setCamera()
-    }
-    keyControl.addKeyAction(KeyCode.Q, "t forward"){
-      cameraControl.translation.z -= moveStep
-      cameraControl.setCamera()
-    }
-    keyControl.addKeyAction(KeyCode.Z, "t backward"){
-      cameraControl.translation.z += moveStep
-      cameraControl.setCamera()
-    }
+    cameraControl.attachKeyControl(keyControl)
     // fftsize
     keyControl.addKeyAction(KeyCode.Num1, "freq down"){
       val old = analyser.fftSize

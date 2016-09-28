@@ -3,13 +3,13 @@ package hjlee.visualizer.control
 import org.denigma.threejs.{Camera, PerspectiveCamera, Vector3}
 import org.scalajs.dom
 import org.scalajs.dom.WheelEvent
+import org.scalajs.dom.ext.KeyCode
 import org.scalajs.dom.html.Element
 
 /**
   * Created by hjlee on 9/19/16.
   */
 class CameraControl(var width: Double, var height: Double) {
-
   def newCamera() = {
     new PerspectiveCamera(15, width/height, 0.1, 20000)
   }
@@ -97,4 +97,54 @@ class CameraControl(var width: Double, var height: Double) {
     canvas.onmousemove = onmousemove
     canvas.onmousewheel = onmousewheel
   }
+
+  def attachKeyControl(keyControl: KeyControl) = {
+    import CameraControl.moveStep
+    keyControl.addKeyAction(KeyCode.Up, "r up") {
+      this.angleXdeg.inc()
+      this.setCamera()
+    }
+    keyControl.addKeyAction(KeyCode.Down, "r down") {
+      this.angleXdeg.dec()
+      this.setCamera()
+    }
+    keyControl.addKeyAction(KeyCode.Right, "r right") {
+      this.angleYdeg.inc()
+      this.setCamera()
+    }
+    keyControl.addKeyAction(KeyCode.Left, "r left") {
+      this.angleYdeg.dec()
+      this.setCamera()
+    }
+    //
+    keyControl.addKeyAction(KeyCode.W, "t up") {
+      this.translation.y += moveStep
+      this.setCamera()
+    }
+    keyControl.addKeyAction(KeyCode.S, "t down") {
+      this.translation.y -= moveStep
+      this.setCamera()
+    }
+    keyControl.addKeyAction(KeyCode.D, "t right") {
+      this.translation.x += moveStep
+      this.setCamera()
+    }
+    keyControl.addKeyAction(KeyCode.A, "t left") {
+      this.translation.x -= moveStep
+      this.setCamera()
+    }
+    keyControl.addKeyAction(KeyCode.Q, "t forward") {
+      this.translation.z -= moveStep
+      this.setCamera()
+    }
+    keyControl.addKeyAction(KeyCode.Z, "t backward") {
+      this.translation.z += moveStep
+      this.setCamera()
+    }
+  }
+
+}
+
+object CameraControl {
+  val moveStep: Int = 10
 }
