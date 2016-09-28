@@ -8,6 +8,8 @@ import scala.scalajs.js.Dynamic.{global => g}
   * Created by hjlee on 9/14/16.
   */
 abstract class SceneMaker(app: Visualizer) {
+  def name: String
+
   def renderFramePerAudioFrame: Double
 
   def render()

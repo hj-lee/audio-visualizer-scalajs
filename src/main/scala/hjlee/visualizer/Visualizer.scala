@@ -112,37 +112,66 @@ class Visualizer(stream: js.Dynamic) {
     cameraControl.attachKeyControl(keyControler)
 
     // fftsize
-    keyControler.addKeyAction(KeyCode.Num1, "freq down"){
-      val old = analyser.fftSize
-      var newSize = old /2
-      if (newSize < Analyser.MIN_FFT_SIZE) newSize = Analyser.MIN_FFT_SIZE
-      if (old != newSize) analyser.fftSize = newSize
-      startRender()
+    val fftSizeVar = new LimitedVariable[Int](analyser.fftSize, 1, Analyser.MIN_FFT_SIZE, Analyser.MAX_FFT_SIZE) {
+      override def incImpl(): Unit = {
+        value *= 2
+        _checkBoundary()
+      }
+      override def decImpl(): Unit = {
+        value /= 2
+        _checkBoundary()
+      }
+      // do nothing
+      override def setImpl(v: Int): Unit = {}
     }
-    keyControler.addKeyAction(KeyCode.Num2, "freq up"){
-      val old = analyser.fftSize
-      var newSize = old * 2
-      if (newSize > Analyser.MAX_FFT_SIZE) newSize = Analyser.MAX_FFT_SIZE
-      if (old != newSize) analyser.fftSize = newSize
-      startRender()
+    fftSizeVar.addObserver(new VariableObserver[Int] {
+      override def changed(cv: ControlVariable[Int]): Unit = {
+        val old = analyser.fftSize
+        if(old != cv.get) {
+          analyser.fftSize = cv.get
+          startRender()
+        }
+      }
+    })
+
+    keyControler.addKeyContorl(fftSizeVar.makeKeyControl("Fft Size:", KeyCode.Num1, "1", KeyCode.Num2, "2"))
+
+    val sceneMakerVar = new CircularInt(upperLimit = sceneMakers.length-1) {
+      override protected def _toString(v: Int): String = {
+        sceneMakers(v).name
+      }
     }
+
+    sceneMakerVar.addObserver(new VariableObserver[Int] {
+      override def changed(cv: ControlVariable[Int]): Unit = {
+        sceneMakerIdx = cv.get
+        val newSceneMaker = sceneMakers(sceneMakerIdx)
+        newSceneMaker.setSize(width, height)
+        sceneMaker.clear()
+        sceneMaker = newSceneMaker
+        startRender()
+      }
+    })
+
+    keyControler.addKeyContorl(sceneMakerVar.makeKeyControl("Style:", KeyCode.Num9, "9", KeyCode.Num0, "0"))
+
     // new sceneMaker
-    keyControler.addKeyAction(KeyCode.Num9, "prev sm"){
-      sceneMakerIdx = (sceneMakerIdx - 1 + sceneMakers.length) % sceneMakers.length
-      val newSceneMaker = sceneMakers(sceneMakerIdx)
-      newSceneMaker.setSize(width, height)
-      sceneMaker.clear()
-      sceneMaker = newSceneMaker
-      startRender()
-    }
-    keyControler.addKeyAction(KeyCode.Num0, "next sm"){
-      sceneMakerIdx = (sceneMakerIdx + 1) % sceneMakers.length
-      val newSceneMaker = sceneMakers(sceneMakerIdx)
-      newSceneMaker.setSize(width, height)
-      sceneMaker.clear()
-      sceneMaker = newSceneMaker
-      startRender()
-    }
+//    keyControler.addKeyAction(KeyCode.Num9, "prev sm"){
+//      sceneMakerIdx = (sceneMakerIdx - 1 + sceneMakers.length) % sceneMakers.length
+//      val newSceneMaker = sceneMakers(sceneMakerIdx)
+//      newSceneMaker.setSize(width, height)
+//      sceneMaker.clear()
+//      sceneMaker = newSceneMaker
+//      startRender()
+//    }
+//    keyControler.addKeyAction(KeyCode.Num0, "next sm"){
+//      sceneMakerIdx = (sceneMakerIdx + 1) % sceneMakers.length
+//      val newSceneMaker = sceneMakers(sceneMakerIdx)
+//      newSceneMaker.setSize(width, height)
+//      sceneMaker.clear()
+//      sceneMaker = newSceneMaker
+//      startRender()
+//    }
 
     controls.appendChild(keyControler.render)
   }

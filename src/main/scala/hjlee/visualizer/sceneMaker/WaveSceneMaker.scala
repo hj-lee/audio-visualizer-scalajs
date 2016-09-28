@@ -11,6 +11,7 @@ import scala.scalajs.js.typedarray.Float32Array
   */
 class WaveSceneMaker(app: Visualizer) extends SceneMaker(app) {
   override val renderFramePerAudioFrame: Double = 1.0
+  override val name = "Wave"
 
   val mat = new LineBasicMaterial()
   mat.color = new Color(0xffffff)

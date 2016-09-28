@@ -10,6 +10,7 @@ import scala.scalajs.js.typedarray.Float32Array
 class DualSceneMaker(app: Visualizer) extends SceneMaker(app) {
 //  private[this] var _renderFrame = 2.0
 //  override def renderFramePerAudioFrame = _renderFrame
+  override val name = "Dual"
 
   override def renderFramePerAudioFrame: Double = fftMaker.renderFramePerAudioFrame
 
