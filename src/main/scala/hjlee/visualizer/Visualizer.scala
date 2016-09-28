@@ -25,7 +25,7 @@ class Visualizer(stream: js.Dynamic) {
   val scene = new Scene()
   val renderer = new WebGLRenderer()
 
-  val keyControl = new KeyControl
+  val keyControl = new KeyControler
 
   def windowResize(): Unit = {
     width = window.innerWidth
@@ -111,6 +111,7 @@ class Visualizer(stream: js.Dynamic) {
 
     // MARK
     cameraControl.attachKeyControl(keyControl)
+
     // fftsize
     keyControl.addKeyAction(KeyCode.Num1, "freq down"){
       val old = analyser.fftSize

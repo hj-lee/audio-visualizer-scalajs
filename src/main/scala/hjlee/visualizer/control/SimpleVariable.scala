@@ -5,7 +5,7 @@ import scala.math.ScalaNumber
 /**
   * Created by hjlee on 9/26/16.
   */
-class SimpleVariable(val initial: Double, val increment: Double) extends ControlVariable{
+class SimpleVariable(val initial: Double, val increment: Double) extends ControlVariable[Double] {
   var value = initial
 
   override def get: Double = value

@@ -10,14 +10,21 @@ import org.scalajs.dom.html.Element
   * Created by hjlee on 9/19/16.
   */
 class CameraControl(var width: Double, var height: Double) {
+  import CameraControl.moveStep
+
   def newCamera() = {
     new PerspectiveCamera(15, width/height, 0.1, 20000)
   }
   var camera: Camera = newCamera()
 
-  val angleXdeg = new CircularVariable(10, 1, -180, 180)
-  val angleYdeg = new CircularVariable(0, 1, -180, 180)
-  val translation = new Vector3(0,0,0)
+  val angleXdeg = ControlVariable.newDegreeVar(10)
+  val angleYdeg = ControlVariable.newDegreeVar(0)
+//  val translation = new Vector3(0,0,0)
+  private def _makeTrVariable() = ControlVariable.newSimpleVar(0, moveStep)
+  val trX = _makeTrVariable()
+  val trY = _makeTrVariable()
+  val trZ = _makeTrVariable()
+
   var distance = 4.1 * height
   val poi = new Vector3(0, 0, 0)
 
@@ -45,9 +52,9 @@ class CameraControl(var width: Double, var height: Double) {
     camera.rotation.x = -angleX
     camera.rotation.y = angleY
 
-    camera.translateX(translation.x)
-    camera.translateY(translation.y)
-    camera.translateZ(translation.z)
+    camera.translateX(trX.get)
+    camera.translateY(trY.get)
+    camera.translateZ(trZ.get)
   }
 
 
@@ -57,16 +64,16 @@ class CameraControl(var width: Double, var height: Double) {
     var down = false
     var baseAngleX = 0.0
     var baseAngleY = 0.0
-    var baseX = translation.x
-    var baseY = translation.y
+    var baseX = trX.get
+    var baseY = trY.get
 
     val onmousedown = (e: dom.MouseEvent) => {
       down = true
       startPos = (e.clientX, e.clientY)
       baseAngleX = angleXdeg.get
       baseAngleY = angleYdeg.get
-      baseX = translation.x
-      baseY = translation.y
+      baseX = trX.get
+      baseY = trY.get
     }
     val onmouseup = (e: dom.MouseEvent) => {
       down = false
@@ -77,8 +84,8 @@ class CameraControl(var width: Double, var height: Double) {
         val xDiff = e.clientX - startPos._1
         val yDiff = e.clientY - startPos._2
         if(e.shiftKey) {
-          translation.x = baseX - xDiff
-          translation.y = baseY + yDiff
+          trX.set(baseX - xDiff)
+          trY.set(baseY + yDiff)
         } else {
           angleXdeg.set(baseAngleX + yDiff.asInstanceOf[Int])
           angleYdeg.set(baseAngleY + xDiff.asInstanceOf[Int])
@@ -87,7 +94,9 @@ class CameraControl(var width: Double, var height: Double) {
       }
     }
     val onmousewheel = (e: WheelEvent) => {
-      translation.z += e.deltaY
+//      translation.z += e.deltaY
+      val sign = Math.signum(e.deltaY)
+      trZ.inc(sign.asInstanceOf[Int])
       setCamera()
     }
 
@@ -98,8 +107,7 @@ class CameraControl(var width: Double, var height: Double) {
     canvas.onmousewheel = onmousewheel
   }
 
-  def attachKeyControl(keyControl: KeyControl) = {
-    import CameraControl.moveStep
+  def attachKeyControl(keyControl: KeyControler) = {
     keyControl.addKeyAction(KeyCode.Up, "r up") {
       this.angleXdeg.inc()
       this.setCamera()
@@ -118,27 +126,27 @@ class CameraControl(var width: Double, var height: Double) {
     }
     //
     keyControl.addKeyAction(KeyCode.W, "t up") {
-      this.translation.y += moveStep
+      this.trY.inc()
       this.setCamera()
     }
     keyControl.addKeyAction(KeyCode.S, "t down") {
-      this.translation.y -= moveStep
+      this.trY.dec()
       this.setCamera()
     }
     keyControl.addKeyAction(KeyCode.D, "t right") {
-      this.translation.x += moveStep
+      this.trX.inc()
       this.setCamera()
     }
     keyControl.addKeyAction(KeyCode.A, "t left") {
-      this.translation.x -= moveStep
+      this.trX.dec()
       this.setCamera()
     }
     keyControl.addKeyAction(KeyCode.Q, "t forward") {
-      this.translation.z -= moveStep
+      this.trZ.dec()
       this.setCamera()
     }
     keyControl.addKeyAction(KeyCode.Z, "t backward") {
-      this.translation.z += moveStep
+      this.trZ.inc()
       this.setCamera()
     }
   }
