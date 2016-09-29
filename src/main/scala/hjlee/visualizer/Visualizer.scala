@@ -124,15 +124,14 @@ class Visualizer(stream: js.Dynamic) {
       // do nothing
       override def setImpl(v: Int): Unit = {}
     }
-    fftSizeVar.addObserver(new VariableObserver[Int] {
-      override def changed(cv: ControlVariable[Int]): Unit = {
-        val old = analyser.fftSize
-        if(old != cv.get) {
-          analyser.fftSize = cv.get
-          startRender()
-        }
+    fftSizeVar.addObserver{ newSize =>
+      val oldSize = analyser.fftSize
+      if(oldSize != newSize) {
+        analyser.fftSize = newSize
+        startRender()
       }
-    })
+    }
+
 
     keyControler.addKeyContorl(fftSizeVar.makeKeyControl("Fft Size:", KeyCode.Num1, "1", KeyCode.Num2, "2"))
 
@@ -142,36 +141,15 @@ class Visualizer(stream: js.Dynamic) {
       }
     }
 
-    sceneMakerVar.addObserver(new VariableObserver[Int] {
-      override def changed(cv: ControlVariable[Int]): Unit = {
-        sceneMakerIdx = cv.get
-        val newSceneMaker = sceneMakers(sceneMakerIdx)
-        newSceneMaker.setSize(width, height)
-        sceneMaker.clear()
-        sceneMaker = newSceneMaker
-        startRender()
-      }
-    })
+    sceneMakerVar.addObserver { sceneMakerIdx =>
+      val newSceneMaker = sceneMakers(sceneMakerIdx)
+      newSceneMaker.setSize(width, height)
+      sceneMaker.clear()
+      sceneMaker = newSceneMaker
+      startRender()
+    }
 
     keyControler.addKeyContorl(sceneMakerVar.makeKeyControl("Style:", KeyCode.Num9, "9", KeyCode.Num0, "0"))
-
-    // new sceneMaker
-//    keyControler.addKeyAction(KeyCode.Num9, "prev sm"){
-//      sceneMakerIdx = (sceneMakerIdx - 1 + sceneMakers.length) % sceneMakers.length
-//      val newSceneMaker = sceneMakers(sceneMakerIdx)
-//      newSceneMaker.setSize(width, height)
-//      sceneMaker.clear()
-//      sceneMaker = newSceneMaker
-//      startRender()
-//    }
-//    keyControler.addKeyAction(KeyCode.Num0, "next sm"){
-//      sceneMakerIdx = (sceneMakerIdx + 1) % sceneMakers.length
-//      val newSceneMaker = sceneMakers(sceneMakerIdx)
-//      newSceneMaker.setSize(width, height)
-//      sceneMaker.clear()
-//      sceneMaker = newSceneMaker
-//      startRender()
-//    }
 
     controls.appendChild(keyControler.render)
   }

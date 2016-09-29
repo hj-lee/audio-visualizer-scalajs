@@ -30,12 +30,12 @@ trait ControlVariable[T] {
 
 
 //  var observers: Option[TableCell] = None
-  private[this] val observers: mutable.ArrayBuffer[VariableObserver[T]] = mutable.ArrayBuffer()
+  private[this] val observers: mutable.ArrayBuffer[T => Unit] = mutable.ArrayBuffer()
 
-  def addObserver(ob : VariableObserver[T]) = observers += ob
+  def addObserver(ob : T => Unit) = observers += ob
 
   protected def _notifyChange(): Unit = {
-    observers.foreach(_.changed(this))
+    observers.foreach(_(get))
   }
   protected def _toString(v: T): String = {
     v.toString
@@ -62,11 +62,9 @@ trait ControlVariable[T] {
       }
       override def genTableRow(): TypedTag[TableRow] = {
         val contentTd = td(_toString(cv.get)).render
-        cv.addObserver(new VariableObserver[T] {
-          override def changed(cv: ControlVariable[T]): Unit = {
-            contentTd.innerHTML = _toString(cv.get)
-          }
-        })
+        cv.addObserver{ v =>
+            contentTd.innerHTML = _toString(v)
+        }
         tr(
           td(title),
           td(button(onclick:= decAction)(decKey)),

@@ -32,9 +32,9 @@ class KeyControler {
     }
   }
 
-  def addKeyAction(keyCode: Int, description: String)(action: => Unit) = {
-    codeActionMap.update(keyCode, () => action)
-  }
+//  def addKeyAction(keyCode: Int, description: String)(action: => Unit) = {
+//    codeActionMap.update(keyCode, () => action)
+//  }
 
   def render() = {
     table(
